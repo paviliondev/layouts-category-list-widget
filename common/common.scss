@@ -1,4 +1,6 @@
 .layouts-category-list {
+  padding: 6px 12px;
+  
   ul {
     list-style: none;
 
@@ -33,15 +35,11 @@
       &:first-of-type {
         margin-top: 0;
       }
-      
-      &:last-of-type {
-        margin-bottom: 0;
-      }
     }
   }
 
   ul.child-categories {
-    margin-left: 10px;
+    margin: 0 0 0 10px;
     
     > li {
       &:last-of-type {

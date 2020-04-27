@@ -39,7 +39,7 @@ export default createWidget('layouts-category-list', {
           )
         }
         
-        return h('li', contents);
+        return contents;
       })
     );
   }
