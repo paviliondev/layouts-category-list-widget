@@ -1,0 +1,52 @@
+.layouts-category-list {
+  ul {
+    list-style: none;
+
+    li {
+      margin: 5px 0;
+      
+      .layouts-category-link {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        
+        .category-logo {
+          margin-right: 10px;
+          
+          img {
+            height: 30px;
+            width: 30px;
+          }
+        }
+        
+        .badge-wrapper {
+          white-space: initial;
+        }
+      }
+    }
+  }
+
+  ul.parent-categories {
+    margin: 0;
+    
+    > li {
+      &:first-of-type {
+        margin-top: 0;
+      }
+      
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  ul.child-categories {
+    margin-left: 10px;
+    
+    > li {
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+excluded_categories:
+  type: list
+  default: ""
+  description:
+    en: "List of excluded category slugs"
