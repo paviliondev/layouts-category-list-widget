@@ -1,29 +1,26 @@
 .layouts-category-list {
-  padding: 6px 12px;
+  padding: 10px 12px;
   
   ul {
     list-style: none;
 
-    li {
+    li.layouts-category-link {
+      display: flex;
+      align-items: center;
       margin: 5px 0;
+      cursor: pointer;
+
+      .category-logo {
+        margin-right: 10px;
+        
+        img {
+          height: 30px;
+          width: 30px;
+        }
+      }
       
-      .layouts-category-link {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        
-        .category-logo {
-          margin-right: 10px;
-          
-          img {
-            height: 30px;
-            width: 30px;
-          }
-        }
-        
-        .badge-wrapper {
-          white-space: initial;
-        }
+      .badge-wrapper {
+        white-space: initial;
       }
     }
   }
@@ -34,6 +31,10 @@
     > li {
       &:first-of-type {
         margin-top: 0;
+      }
+      
+      &:last-of-type {
+        margin-bottom: 0;
       }
     }
   }
