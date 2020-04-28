@@ -1,6 +1,11 @@
 export default {
   name: 'layouts-category-list',
   initialize(container) {
+    const siteSettings = container.lookup('site-settings:main');
+    const site = container.lookup('site:main');
+    if (!siteSettings.layouts_enabled ||
+        (site.mobileView && !siteSettings.layouts_mobile_enabled)) return;
+        
     let layoutsError;
     let layouts;
     
@@ -8,12 +13,10 @@ export default {
       layouts = requirejs('discourse/plugins/discourse-layouts/discourse/lib/layouts');
     } catch(error) {
       layoutsError = error;
+      console.error(layoutsError);
     }
     
-    const siteSettings = container.lookup('site-settings:main');
-    const site = container.lookup('site:main');
-    if (!siteSettings.layouts_enabled ||
-        (site.mobileView && !siteSettings.layouts_mobile_enabled)) return;
+    if (layoutsError) return;
     
     const categories = site.categories.filter(c => !c.isUncategorizedCategory);
     const parentCategories = [];

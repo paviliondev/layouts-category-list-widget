@@ -1,9 +1,20 @@
-import { createLayoutsWidget } from 'discourse/plugins/discourse-layouts/discourse/lib/layouts';
 import { createWidget } from 'discourse/widgets/widget';
 import { h } from 'virtual-dom';
 import DiscourseURL from 'discourse/lib/url';
 
-export default createLayoutsWidget('category-list', {
+let layoutsError;
+let layouts;
+
+try {
+  layouts = requirejs('discourse/plugins/discourse-layouts/discourse/lib/layouts');
+} catch(error) {
+  layoutsError = error;
+  console.error(layoutsError);
+}
+
+if (layoutsError) return;
+
+export default layouts.createLayoutsWidget('category-list', {
   html(attrs, state) {
     const { category, parentCategories, childCategories } = attrs;
     const excluded = settings.excluded_categories.split('|');
