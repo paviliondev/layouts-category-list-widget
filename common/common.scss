@@ -1,5 +1,5 @@
 .layouts-category-list {
-  padding: 10px 12px;
+  padding: 10px 0;
   
   ul {
     list-style: none;
@@ -7,8 +7,13 @@
     li.layouts-category-link {
       display: flex;
       align-items: center;
-      margin: 5px 0;
+      height: 30px;
+      margin: 0;
       cursor: pointer;
+      
+      &.active, &:hover {
+        background-color: $primary-low;
+      }
 
       .category-logo {
         margin-right: 10px;
@@ -19,8 +24,14 @@
         }
       }
       
-      .badge-wrapper {
-        white-space: initial;
+      .category-name {
+        margin-left: 20px;
+      }
+      
+      .active-marker {
+        height: 30px;
+        width: 3px;
+        margin-left: auto;
       }
     }
   }

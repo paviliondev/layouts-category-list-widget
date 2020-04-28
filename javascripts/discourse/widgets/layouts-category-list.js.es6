@@ -8,11 +8,9 @@ let layouts;
 try {
   layouts = requirejs('discourse/plugins/discourse-layouts/discourse/lib/layouts');
 } catch(error) {
-  layoutsError = error;
-  console.error(layoutsError);
+  layouts = { createLayoutsWidget: createWidget };
+  console.error(error);
 }
-
-if (layoutsError) return;
 
 export default layouts.createLayoutsWidget('category-list', {
   html(attrs, state) {
@@ -23,26 +21,25 @@ export default layouts.createLayoutsWidget('category-list', {
         return excluded.indexOf(c.slug) === -1;
       }).map(parent => {
         let contents = [];
+        let isCurrent = (cat) => (category && (category.id == cat.id));
+        let isParent = category && category.parentCategory && category.parentCategory.id == parent.id;
+        let children = childCategories[parent.slug];
               
         contents.push(
           this.attach('layouts-category-link', {
-            category: parent
+            category: parent,
+            active: isCurrent(parent)
           })
         );
               
-        if (category &&
-            (category.slug == parent.slug ||
-            (category.parentCategory && category.parentCategory.slug == parent.slug)) &&
-            childCategories[parent.slug]) {
-          
+        if ((isCurrent(parent) || isParent) && children) {
           contents.push(
-            h('ul.child-categories',
-              childCategories[parent.slug].filter(c => {
+            h('ul.child-categories', children.filter(c => {
                 return excluded.indexOf(c.slug) === -1;
               }).map(child => {
                 return this.attach('layouts-category-link', {
                   category: child,
-                  classes: child.up
+                  active: isCurrent(child)
                 });
               })
             )
@@ -75,6 +72,9 @@ createWidget('layouts-category-link', {
   
   buildClasses(attrs, state) {
     let classes = 'layouts-category-link';
+    if (attrs.active) {
+      classes += ' active';
+    }
     if (state.extraClasses.length) {
       classes += ` ${state.extraClasses.join(' ')}`;
     }
@@ -91,22 +91,20 @@ createWidget('layouts-category-link', {
           h('img', {
             attributes: { src: category.uploaded_logo.url }
           })
-        ),
-        h('div.category-name', category.name)
+        )
       )
       if (state.extraClasses.indexOf('has-logo') === -1) {
         state.extraClasses.push('has-logo');
         this.scheduleRerender();
       }
-    } else {
-      contents.push(
-        this.attach('category-link', {
-          category,
-          hideParent: true,
-          allowUncategorized: false,
-          link: false
-        })
-      )
+    } 
+    
+    contents.push(h('div.category-name', category.name))
+    
+    if (attrs.active) {
+      contents.push(h('span.active-marker', { 
+        attributes: { style: `background-color: #${category.color}` }
+      }))
     }
     
     return contents;
