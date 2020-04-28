@@ -1,10 +1,9 @@
+import { createLayoutsWidget } from 'discourse/plugins/discourse-layouts/discourse/lib/layouts';
 import { createWidget } from 'discourse/widgets/widget';
 import { h } from 'virtual-dom';
 import DiscourseURL from 'discourse/lib/url';
 
-export default createWidget('layouts-category-list', {
-  tagName: 'div.layouts-category-list.widget-container',
-
+export default createLayoutsWidget('category-list', {
   html(attrs, state) {
     const { category, parentCategories, childCategories } = attrs;
     const excluded = settings.excluded_categories.split('|');
