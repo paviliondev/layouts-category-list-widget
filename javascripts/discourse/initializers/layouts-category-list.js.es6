@@ -11,10 +11,10 @@ export default {
     }
     
     const siteSettings = container.lookup('site-settings:main');
+    const site = container.lookup('site:main');
     if (!siteSettings.layouts_enabled ||
         (site.mobileView && !siteSettings.layouts_mobile_enabled)) return;
     
-    const site = container.lookup('site:main');
     const categories = site.categories.filter(c => !c.isUncategorizedCategory);
     const parentCategories = [];
     const childCategories = {};
