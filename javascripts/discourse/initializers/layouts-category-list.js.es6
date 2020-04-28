@@ -1,8 +1,19 @@
-import { addSidebarProps } from 'discourse/plugins/discourse-layouts/discourse/lib/layouts';
-
 export default {
   name: 'layouts-category-list',
   initialize(container) {
+    let layoutsError;
+    let layouts;
+    
+    try {
+      layouts = requirejs('discourse/plugins/discourse-layouts/discourse/lib/layouts');
+    } catch(error) {
+      layoutsError = error;
+    }
+    
+    const siteSettings = container.lookup('site-settings:main');
+    if (!siteSettings.layouts_enabled ||
+        (site.mobileView && !siteSettings.layouts_mobile_enabled)) return;
+    
     const site = container.lookup('site:main');
     const categories = site.categories.filter(c => !c.isUncategorizedCategory);
     const parentCategories = [];
@@ -24,6 +35,6 @@ export default {
       childCategories
     }
     
-    addSidebarProps(props);
+    layouts.addSidebarProps(props);
   }
 }
