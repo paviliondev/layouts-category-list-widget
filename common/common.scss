@@ -58,4 +58,8 @@
       }
     }
   }
+  
+  li.layouts-category-link.has-logo + ul.child-categories > li {
+    padding-left: 50px;
+  }
 }
