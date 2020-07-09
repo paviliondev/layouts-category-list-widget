@@ -3,3 +3,11 @@ excluded_categories:
   default: ""
   description:
     en: "List of excluded category slugs"
+order_by_activity:
+  default: false
+  description:
+    en: "Order list by activity"
+show_unread:
+  default: false
+  description:
+    en: "Show unread counts on list"
