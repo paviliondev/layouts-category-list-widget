@@ -43,19 +43,22 @@ export default layouts.createLayoutsWidget('category-list', {
         
         if (settings.order_by_activity) {
           orderedChildrenList = _.sortBy(childrenList, 'latest_post_created_at').reverse();
-          let monthSeperators = {1:false,2:false,4:false,6:false};
-          orderedChildrenList.forEach((category, index) => {
-            let addSeperator = null;
-            Object.keys(monthSeperators).forEach((seperator) => {
-              if (!monthSeperators[seperator] && isOlderThanXMonths(category, seperator)) {
-                monthSeperators[seperator] = true;
-                addSeperator = seperator;
+          
+          if (this.currentUser) {
+            let monthSeperators = {1:false,2:false,4:false,6:false};
+            orderedChildrenList.forEach((category, index) => {
+              let addSeperator = null;
+              Object.keys(monthSeperators).forEach((seperator) => {
+                if (!monthSeperators[seperator] && isOlderThanXMonths(category, seperator)) {
+                  monthSeperators[seperator] = true;
+                  addSeperator = seperator;
+                }
+              });
+              if (addSeperator) {
+                orderedChildrenList.splice(index, 0, { seperator: addSeperator });
               }
             });
-            if (addSeperator) {
-              orderedChildrenList.splice(index, 0, { seperator: addSeperator });
-            }
-          });
+          }
         }
         
         contents.push(
