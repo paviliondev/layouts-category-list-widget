@@ -40,8 +40,9 @@ export default layouts.createLayoutsWidget('category-list', {
       if ((isCurrent(parent) || isParent) && children) {
         let childrenList = children.filter(c => excluded.indexOf(c.slug) === -1);
         let orderedChildrenList = childrenList;
+        let orderByActivity = settings.order_by_activity.split('|').indexOf(parent.slug) > -1;
         
-        if (settings.order_by_activity) {
+        if (orderByActivity) {
           orderedChildrenList = _.sortBy(childrenList, 'latest_post_created_at').reverse();
           
           if (this.currentUser) {
@@ -95,8 +96,17 @@ createWidget('layouts-category-link', {
   buildKey: (attrs) => `layouts-category-link-${attrs.category.id}`,
   
   defaultState(attrs) {
+    const setCats = settings.show_unread.split('|');
+    const category = attrs.category;
+    const refCats = [category.slug];
+    
+    if (category.parentCategory) {
+      refCats.push(category.parentCategory.slug);
+    }
+    
     return {
       extraClasses: [],
+      showUnread: setCats.filter(c => refCats.indexOf(c) > -1).length
     }
   },
   
@@ -139,7 +149,7 @@ createWidget('layouts-category-link', {
     
     contents.push(h('div.category-name', category.name))
 
-    if (settings.show_unread && category.unreadTopics > 0) {
+    if (state.showUnread && category.unreadTopics > 0) {
       contents.push(h('div.badge-notification.unread-posts', `${category.unreadTopics}`));
     }
     

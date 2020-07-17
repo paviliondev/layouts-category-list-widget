@@ -4,10 +4,12 @@ excluded_categories:
   description:
     en: "List of excluded category slugs"
 order_by_activity:
-  default: false
+  type: list
+  default: ""
   description:
-    en: "Order list by activity"
+    en: "Parent categories where children are ordered by activity"
 show_unread:
-  default: false
+  type: list
+  default: ""
   description:
-    en: "Show unread counts on list"
+    en: "Parent categories to show unread counts"
