@@ -165,7 +165,9 @@ createWidget('layouts-category-link', {
   },
   
   click() {
-    this.appEvents.trigger('sidebar:toggle', this.attrs.side);
+    if (this.attrs.category.parentCategory) {
+      this.appEvents.trigger('sidebar:toggle', this.attrs.side);
+    }
     DiscourseURL.routeTo(this.attrs.category.url);
     return true;
   }
