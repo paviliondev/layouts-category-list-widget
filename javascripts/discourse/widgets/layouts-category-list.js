@@ -19,7 +19,7 @@ const isOlderThanXMonths = (category, count) => {
 
 export default layouts.createLayoutsWidget('category-list', {
   html(attrs, state) {
-    const { category, parentCategories, childCategories } = attrs;
+    const { category, parentCategories, childCategories, side } = attrs;
     const excluded = settings.excluded_categories.split('|');
     
     let categoryList = parentCategories.filter(c => {
@@ -33,7 +33,8 @@ export default layouts.createLayoutsWidget('category-list', {
       contents.push(
         this.attach('layouts-category-link', {
           category: parent,
-          active: isCurrent(parent)
+          active: isCurrent(parent),
+          side
         })
       );
             
@@ -76,7 +77,8 @@ export default layouts.createLayoutsWidget('category-list', {
               } else {
                 return this.attach('layouts-category-link', {
                   category: child,
-                  active: isCurrent(child)
+                  active: isCurrent(child),
+                  side
                 });
               }
             })
@@ -163,7 +165,8 @@ createWidget('layouts-category-link', {
   },
   
   click() {
-    DiscourseURL.routeTo(this.attrs.category.url)
+    this.appEvents.trigger('sidebar:toggle', this.attrs.side);
+    DiscourseURL.routeTo(this.attrs.category.url);
     return true;
   }
 })
