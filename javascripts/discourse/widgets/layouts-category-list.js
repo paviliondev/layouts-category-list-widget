@@ -22,6 +22,8 @@ export default layouts.createLayoutsWidget('category-list', {
     const { category, parentCategories, childCategories, side } = attrs;
     const excluded = settings.excluded_categories.split('|');
     
+    if (!parentCategories) return '';
+    
     let categoryList = parentCategories.filter(c => {
       return excluded.indexOf(c.slug) === -1;
     }).map(parent => {
@@ -34,7 +36,8 @@ export default layouts.createLayoutsWidget('category-list', {
         this.attach('layouts-category-link', {
           category: parent,
           active: isCurrent(parent),
-          side
+          side,
+          toggle: !children 
         })
       );
             
@@ -78,7 +81,8 @@ export default layouts.createLayoutsWidget('category-list', {
                 return this.attach('layouts-category-link', {
                   category: child,
                   active: isCurrent(child),
-                  side
+                  side,
+                  toggle: true
                 });
               }
             })
@@ -165,7 +169,7 @@ createWidget('layouts-category-link', {
   },
   
   click() {
-    if (this.attrs.category.parentCategory) {
+    if (this.attrs.toggle) {
       this.appEvents.trigger('sidebar:toggle', this.attrs.side);
     }
     DiscourseURL.routeTo(this.attrs.category.url);
