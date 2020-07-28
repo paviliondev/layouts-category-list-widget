@@ -173,7 +173,7 @@ createWidget('layouts-category-link', {
       this.appEvents.trigger('sidebar:toggle', {
         side: this.attrs.side,
         value: false,
-        onlyResponsive: true
+        target: 'responsive'
       });
     }
     DiscourseURL.routeTo(this.attrs.category.url);
