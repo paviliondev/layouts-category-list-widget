@@ -18,11 +18,14 @@
       }
 
       .category-logo {
-        margin-right: 7px;
+        margin-right: 5px;
+        height: 25px;
+        width: 25px;
+        display: flex;
+        justify-content: center;
         
         img {
-          height: 23px;
-          width: 23px;
+          height: 100%;
         }
       }
       
