@@ -18,6 +18,13 @@ const isOlderThanXMonths = (category, count) => {
 };
 
 export default layouts.createLayoutsWidget('category-list', {
+  
+  defaultState(attrs) {
+    return {
+      hideExtraChildren: true
+    }
+  },
+  
   html(attrs, state) {
     const { category, parentCategories, childCategories, side } = attrs;
     const excluded = settings.excluded_categories.split('|');
@@ -67,34 +74,62 @@ export default layouts.createLayoutsWidget('category-list', {
           }
         }
         
-        contents.push(
-          h('ul.child-categories',
-            orderedChildrenList.map(child => {
-              if (child.seperator) {
-                return h("li.time-gap", [
+        let childCategoryList = [];
+        
+        orderedChildrenList.some((child, index) => {
+          if (child.seperator) {
+            console.log(state.hideExtraChildren, child.seperator, index < (orderedChildrenList.length - 1))         
+            if (state.hideExtraChildren &&
+                child.seperator == 1 && 
+                index < (orderedChildrenList.length - 1)) {
+              
+              childCategoryList.push(
+                h('li',
+                  this.attach('button', {
+                    action: 'showExtraChildren',
+                    label: 'show_more',
+                    className: 'btn-small show-extra-children'
+                  })
+                )
+              );
+              return true;
+            } else {
+              childCategoryList.push(
+                h("li.time-gap", [
                   h('span'),
                   h('label', I18n.t("dates.medium_with_ago.x_months", {
                     count: Number(child.seperator)
                   })),
                   h('span')
-                ]);
-              } else {
-                return this.attach('layouts-category-link', {
-                  category: child,
-                  active: isCurrent(child),
-                  side,
-                  toggle: true
-                });
-              }
-            })
-          )
-        )
+                ])
+              );
+              return false;
+            }
+          } else {
+            childCategoryList.push(
+              this.attach('layouts-category-link', {
+                category: child,
+                active: isCurrent(child),
+                side,
+                toggle: true
+              })
+            );
+            return false;
+          }
+        });
+        
+        contents.push(h('ul.child-categories', childCategoryList));
       }
       
       return contents;
     });
     
     return h('ul.parent-categories', categoryList);
+  },
+  
+  showExtraChildren() {
+    this.state.hideExtraChildren = false;
+    this.scheduleRerender();
   }
 });
 
