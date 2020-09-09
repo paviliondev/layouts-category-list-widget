@@ -8,8 +8,8 @@ order_by_activity:
   default: ""
   description:
     en: "Parent categories where children are ordered by activity"
-show_unread:
+show_new:
   type: list
   default: ""
   description:
-    en: "Parent categories to show unread counts"
+    en: "Parent categories to show new topic counts"

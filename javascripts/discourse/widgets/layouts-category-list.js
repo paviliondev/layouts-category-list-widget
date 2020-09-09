@@ -102,7 +102,7 @@ createWidget('layouts-category-link', {
   buildKey: (attrs) => `layouts-category-link-${attrs.category.id}`,
   
   defaultState(attrs) {
-    const setCats = settings.show_unread.split('|');
+    const setCats = settings.show_new.split('|');
     const category = attrs.category;
     const refCats = [category.slug];
     
@@ -112,7 +112,7 @@ createWidget('layouts-category-link', {
     
     return {
       extraClasses: [],
-      showUnread: setCats.filter(c => refCats.indexOf(c) > -1).length
+      showNew: setCats.filter(c => refCats.indexOf(c) > -1).length
     }
   },
   
@@ -155,8 +155,8 @@ createWidget('layouts-category-link', {
     
     contents.push(h('div.category-name', category.name))
 
-    if (state.showUnread && category.unreadTopics > 0) {
-      contents.push(h('div.badge-notification.unread-posts', `${category.unreadTopics}`));
+    if (state.showNew && category.newTopics > 0) {
+      contents.push(h('div.badge-notification.new-posts', `${category.newTopics}`));
     }
     
     if (attrs.active) {
