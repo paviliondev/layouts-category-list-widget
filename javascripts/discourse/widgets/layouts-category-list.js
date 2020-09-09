@@ -47,7 +47,8 @@ export default layouts.createLayoutsWidget('category-list', {
         let orderByActivity = settings.order_by_activity.split('|').indexOf(parent.slug) > -1;
         
         if (orderByActivity) {
-          orderedChildrenList = _.sortBy(childrenList, 'latest_post_created_at').reverse();
+          orderedChildrenList = childrenList.filter(c => c.latest_post_created_at)
+            .sort((a,b) => (new Date(b.latest_post_created_at) - new Date(a.latest_post_created_at)))
           
           if (this.currentUser) {
             let monthSeperators = {1:false,2:false,4:false,6:false};
