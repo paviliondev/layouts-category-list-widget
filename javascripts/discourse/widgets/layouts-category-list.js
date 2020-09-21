@@ -78,7 +78,6 @@ export default layouts.createLayoutsWidget('category-list', {
         
         orderedChildrenList.some((child, index) => {
           if (child.seperator) {
-            console.log(state.hideExtraChildren, child.seperator, index < (orderedChildrenList.length - 1))         
             if (state.hideExtraChildren &&
                 child.seperator == 1 && 
                 index < (orderedChildrenList.length - 1)) {
