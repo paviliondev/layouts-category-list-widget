@@ -30,8 +30,7 @@
       }
       
       .new-posts {
-        margin-left: auto;
-        margin-right: 10px;
+        margin: 0 10px;
       }
       
       .active-marker {
@@ -39,6 +38,10 @@
         width: 3px;
         position: absolute;
         right: 0;
+      }
+      
+      .reset-new {
+        margin-left: auto;
       }
     }
     

@@ -21,6 +21,7 @@ export default {
     const categories = site.categories.filter(c => !c.isUncategorizedCategory);
     const parentCategories = [];
     const childCategories = {};
+    const categoryIds = [];
 
     categories.forEach(function(c) {
       let parent = c.parentCategory;
@@ -31,11 +32,13 @@ export default {
       } else {
         parentCategories.push(c);
       }
+      categoryIds.push(c.id);
     });
     
     const props = {
       parentCategories,
-      childCategories
+      childCategories,
+      categoryIds
     }
     
     layouts.addSidebarProps(props);

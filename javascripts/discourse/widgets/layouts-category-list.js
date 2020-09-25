@@ -1,6 +1,7 @@
 import { createWidget } from 'discourse/widgets/widget';
 import { h } from 'virtual-dom';
 import DiscourseURL from 'discourse/lib/url';
+import Topic from "discourse/models/topic";
 import { set } from "@ember/object";
 import I18n from "I18n";
 
@@ -20,13 +21,29 @@ const isOlderThanXMonths = (category, count) => {
 export default layouts.createLayoutsWidget('category-list', {
   
   defaultState(attrs) {
+    const topicTracking = this.register.lookup("topic-tracking-state:main");
+    const messageBus = this.register.lookup("message-bus:main");
+    
     return {
-      hideExtraChildren: true
+      hideExtraChildren: true,
+      topicTracking,
+      messageBus
     }
+  },
+  
+  didRenderWidget() {
+    this.state.messageBus.subscribe("/new", (data) => {
+      if (data.message_type == "new_topic") {
+        if (this.attrs.categoryIds.includes(data.payload.category_id)) {
+          this.scheduleRerender();
+        }
+      }
+    });
   },
   
   html(attrs, state) {
     const { category, parentCategories, childCategories, side } = attrs;
+    const { topicTracking, hideExtraChildren } = state;
     const excluded = settings.excluded_categories.split('|');
     
     if (!parentCategories) return '';
@@ -44,7 +61,8 @@ export default layouts.createLayoutsWidget('category-list', {
           category: parent,
           active: isCurrent(parent),
           side,
-          toggle: !children 
+          toggle: !children,
+          topicTracking
         })
       );
             
@@ -78,7 +96,7 @@ export default layouts.createLayoutsWidget('category-list', {
         
         orderedChildrenList.some((child, index) => {
           if (child.seperator) {
-            if (state.hideExtraChildren &&
+            if (hideExtraChildren &&
                 child.seperator == 1 && 
                 index < (orderedChildrenList.length - 1)) {
               
@@ -110,7 +128,8 @@ export default layouts.createLayoutsWidget('category-list', {
                 category: child,
                 active: isCurrent(child),
                 side,
-                toggle: true
+                toggle: true,
+                topicTracking
               })
             );
             return false;
@@ -164,6 +183,9 @@ createWidget('layouts-category-link', {
     if (attrs.active) {
       classes += ' active';
     }
+    if (!attrs.category.parentCategory) {
+      classes += ' parent-category';
+    }
     if (state.extraClasses.length) {
       classes += ` ${state.extraClasses.join(' ')}`;
     }
@@ -171,7 +193,7 @@ createWidget('layouts-category-link', {
   },
   
   html(attrs, state) {
-    const { category } = attrs;
+    const { category, topicTracking } = attrs;
     let contents = [];
     
     if (category.uploaded_logo) {   
@@ -188,10 +210,26 @@ createWidget('layouts-category-link', {
       }
     } 
     
-    contents.push(h('div.category-name', category.name))
-
-    if (state.showNew && category.newTopics > 0) {
-      contents.push(h('div.badge-notification.new-posts', `${category.newTopics}`));
+    contents.push(
+      h('div.category-name', category.name)
+    );
+    
+    const newTopics = topicTracking.lookupCount("new", category);
+    if (state.showNew && newTopics > 0) {      
+      contents.push(
+        h('div.badge-notification.new-posts', `${newTopics}`)
+      );
+      
+      if (!category.parentCategory) {
+        contents.push(
+          this.attach('button', {
+            icon: 'check',
+            action: 'resetNew',
+            actionParam: category,
+            className: 'reset-new'
+          })
+        );
+      }
     }
     
     if (attrs.active) {
@@ -213,5 +251,11 @@ createWidget('layouts-category-link', {
     }
     DiscourseURL.routeTo(this.attrs.category.url);
     return true;
+  },
+  
+  resetNew(category) {
+    Topic.resetNew(category, true).then(() =>
+      this.scheduleRerender()
+    );
   }
 })
