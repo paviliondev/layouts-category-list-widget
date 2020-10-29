@@ -1,4 +1,5 @@
 import { createWidget } from 'discourse/widgets/widget';
+import { iconNode } from "discourse-common/lib/icon-library";
 import { h } from 'virtual-dom';
 import DiscourseURL from 'discourse/lib/url';
 import Topic from "discourse/models/topic";
@@ -209,6 +210,10 @@ createWidget('layouts-category-link', {
         this.scheduleRerender();
       }
     } 
+    
+    if (category.read_restricted) {
+      contents.push(iconNode("lock"));
+    }
     
     contents.push(
       h('div.category-name', category.name)
