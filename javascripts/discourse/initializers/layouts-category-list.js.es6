@@ -3,8 +3,11 @@ export default {
   initialize(container) {
     const siteSettings = container.lookup('site-settings:main');
     const site = container.lookup('site:main');
+    const currentUser = container.lookup('current-user:main');
+        
     if (!siteSettings.layouts_enabled ||
-        (site.mobileView && !siteSettings.layouts_mobile_enabled)) return;
+        (site.mobileView && !siteSettings.layouts_mobile_enabled) ||
+        (siteSettings.login_required && !currentUser)) return;
         
     let layoutsError;
     let layouts;
@@ -13,7 +16,7 @@ export default {
       layouts = requirejs('discourse/plugins/discourse-layouts/discourse/lib/layouts');
     } catch(error) {
       layoutsError = error;
-      console.error(layoutsError);
+      console.warn(layoutsError);
     }
     
     if (layoutsError) return;
