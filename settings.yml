@@ -7,9 +7,9 @@ order_by_activity:
   type: list
   default: ""
   description:
-    en: "Parent categories where children are ordered by activity"
-show_new:
+    en: "Categories where children are ordered by activity"
+show_latest:
   type: list
   default: ""
   description:
-    en: "Parent categories to show new topic counts"
+    en: "Categories to show latest (unread + new) topic counts for"

@@ -12,33 +12,28 @@ try {
   layouts = requirejs('discourse/plugins/discourse-layouts/discourse/lib/layouts');
 } catch(error) {
   layouts = { createLayoutsWidget: createWidget };
-  console.error(error);
+  console.warn(error);
 }
 
 const isOlderThanXMonths = (category, count) => {
-  return moment(category.latest_post_created_at).isBefore(moment().subtract(count, 'months'));
+  return moment(category.bumped_at).isBefore(moment().subtract(count, 'months'));
 };
 
 export default layouts.createLayoutsWidget('category-list', {
   
   defaultState(attrs) {
     const topicTracking = this.register.lookup("topic-tracking-state:main");
-    const messageBus = this.register.lookup("message-bus:main");
     
     return {
       hideExtraChildren: true,
-      topicTracking,
-      messageBus
+      topicTracking
     }
   },
   
   didRenderWidget() {
-    this.state.messageBus.subscribe("/new", (data) => {
-      if (data.message_type == "new_topic") {
-        if (this.attrs.categoryIds.includes(data.payload.category_id)) {
-          this.scheduleRerender();
-        }
-      }
+    const self = this;
+    this.state.topicTracking.addObserver('states', function() {
+      self.scheduleRerender();
     });
   },
   
@@ -103,8 +98,8 @@ export default layouts.createLayoutsWidget('category-list', {
         category,
         active,
         side,
-        toggleOnClick: children.length == 0,
-        topicTracking
+        topicTracking,
+        hasChildren: children.length > 0
       })
     );
           
@@ -119,7 +114,7 @@ export default layouts.createLayoutsWidget('category-list', {
     if (showChildren && children.length > 0) {
       list.push(
         h(`ul.child-categories${grandchildren ? '.grandchildren' : ''}`,
-          this.buildChildList(children)
+          this.buildChildList(children, category)
         )
       );
     }
@@ -127,18 +122,18 @@ export default layouts.createLayoutsWidget('category-list', {
     return list;
   },
   
-  buildChildList(list) {
+  buildChildList(list, category) {
     const { hideExtraChildren } = this.state;
-      
-    if (settings.order_by_activity.split('|').indexOf(parent.slug) > -1) {
+    
+    if (settings.order_by_activity.split('|').indexOf(category.slug) > -1) {
       list = this.orderByActivity(list);
     }
     
     let result = [];
     
-    list.some((category, index) => {
-      if (category.seperator) {
-        if (hideExtraChildren && category.seperator == 1 && index < (list.length - 1)) {
+    list.some((c, index) => {
+      if (c.seperator) {
+        if (hideExtraChildren && c.seperator == 1 && index < (list.length - 1)) {
           result.push(h('li', this.attach('button', {
             action: 'showExtraChildren',
             label: 'show_more',
@@ -148,13 +143,15 @@ export default layouts.createLayoutsWidget('category-list', {
         } else {
           result.push(h("li.time-gap", [
             h('span'),
-            h('label', I18n.t("dates.medium_with_ago.x_months", { count: Number(category.seperator) })),
+            h('label', I18n.t("dates.medium_with_ago.x_months", {
+              count: Number(c.seperator)
+            })),
             h('span')
           ]));
           return false;
         }
       } else {
-        this.addCategory(result, category, true);
+        this.addCategory(result, c, true);
         return false;
       }
     });
@@ -168,24 +165,23 @@ export default layouts.createLayoutsWidget('category-list', {
   },
   
   orderByActivity(list) {
-    list = list.filter(c => c.latest_post_created_at)
-      .sort((a,b) => (new Date(b.latest_post_created_at) - new Date(a.latest_post_created_at)))
-    
-    if (this.currentUser) {
-      let monthSeperators = {1:false,2:false,4:false,6:false};
-      list.forEach((category, index) => {
-        let addSeperator = null;
-        Object.keys(monthSeperators).forEach((seperator) => {
-          if (!monthSeperators[seperator] && isOlderThanXMonths(category, seperator)) {
-            monthSeperators[seperator] = true;
-            addSeperator = seperator;
-          }
-        });
-        if (addSeperator) {
-          list.splice(index, 0, { seperator: addSeperator });
+    list = list.filter(c => c.bumped_at)
+      .sort((a,b) => (new Date(b.bumped_at) - new Date(a.bumped_at)))
+        
+    let monthSeperators = {1:false,2:false,4:false,6:false};
+    list.forEach((category, index) => {
+      let addSeperator = null;
+      Object.keys(monthSeperators).forEach((seperator) => {
+        if (!monthSeperators[seperator] && isOlderThanXMonths(category, seperator)) {
+          monthSeperators[seperator] = true;
+          addSeperator = seperator;
         }
       });
-    }
+      if (addSeperator) {
+        list.splice(index, 0, { seperator: addSeperator });
+      }
+    });
+      
     return list;
   }
 });
@@ -195,7 +191,7 @@ createWidget('layouts-category-link', {
   buildKey: (attrs) => `layouts-category-link-${attrs.category.id}`,
   
   defaultState(attrs) {
-    const setCats = settings.show_new.split('|');
+    const setCats = settings.show_latest.split('|');
     const category = attrs.category;
     const refCats = [category.slug];
     
@@ -205,7 +201,7 @@ createWidget('layouts-category-link', {
     
     return {
       extraClasses: [],
-      showNew: setCats.filter(c => refCats.indexOf(c) > -1).length
+      showLatest: setCats.filter(c => refCats.indexOf(c) > -1).length
     }
   },
   
@@ -232,7 +228,7 @@ createWidget('layouts-category-link', {
   },
   
   html(attrs, state) {
-    const { category, topicTracking } = attrs;
+    const { category, topicTracking, hasChildren } = attrs;
     let contents = [];
     
     if (category.uploaded_logo) {   
@@ -257,22 +253,11 @@ createWidget('layouts-category-link', {
       h('div.category-name', category.name)
     );
     
-    const newTopics = topicTracking.lookupCount("new", category);
-    if (state.showNew && newTopics > 0) {      
+    const latestTopicCount = topicTracking.lookupCount('latest', category);
+    if (state.showLatest && latestTopicCount > 0) {      
       contents.push(
-        h('div.badge-notification.new-posts', `${newTopics}`)
+        h('div.badge-notification.new-posts', `${latestTopicCount}`)
       );
-      
-      if (!category.parentCategory) {
-        contents.push(
-          this.attach('button', {
-            icon: 'check',
-            action: 'resetNew',
-            actionParam: category,
-            className: 'reset-new'
-          })
-        );
-      }
     }
     
     if (attrs.active) {
@@ -285,7 +270,7 @@ createWidget('layouts-category-link', {
   },
   
   click() {
-    if (this.attrs.toggleOnClick) {
+    if (!this.attrs.hasChildren) {
       this.appEvents.trigger('sidebar:toggle', {
         side: this.attrs.side,
         value: false,
@@ -294,11 +279,5 @@ createWidget('layouts-category-link', {
     }
     DiscourseURL.routeTo(this.attrs.category.url);
     return true;
-  },
-  
-  resetNew(category) {
-    Topic.resetNew(category, true).then(() =>
-      this.scheduleRerender()
-    );
   }
 })
