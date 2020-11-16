@@ -42,113 +42,151 @@ export default layouts.createLayoutsWidget('category-list', {
     });
   },
   
-  html(attrs, state) {
-    const { category, parentCategories, childCategories, side } = attrs;
-    const { topicTracking, hideExtraChildren } = state;
+  isCurrent(refCat) {
+    const { category } = this.attrs;
+    return category && (category.id == refCat.id);
+  },
+  
+  isParentOfCurrent(refCat) {
+    const { category } = this.attrs;
+    return category &&
+      category.parentCategory &&
+      (category.parentCategory.id == refCat.id);
+  },
+  
+  isGrandparentOfCurrent(refCat) {
+    const { category } = this.attrs;
+    return category &&
+      category.parentCategory &&
+      category.parentCategory.parentCategory &&
+      (category.parentCategory.parentCategory.id == refCat.id);
+  },
+  
+  getChildren(category) {
+    const { childCategories } = this.attrs;
+    if (!childCategories || !category || !childCategories[category.slug]) return [];
+    return this.filterExclusions(childCategories[category.slug]);
+  },
+  
+  getParents() {
+    const { parentCategories } = this.attrs;
+    if (!parentCategories) return [];
+    return this.filterExclusions(parentCategories);
+  },
+  
+  filterExclusions(list) {
     const excluded = settings.excluded_categories.split('|');
+    return list.filter(c => excluded.indexOf(c.slug) === -1);
+  },
+  
+  html(attrs, state) {
+    const { category } = attrs;
+    const categories = this.getParents();
     
-    if (!parentCategories) return '';
+    if (!categories) return '';
     
-    let categoryList = parentCategories.filter(c => {
-      return excluded.indexOf(c.slug) === -1;
-    }).map(parent => {
-      let contents = [];
-      let isCurrent = (cat) => (category && (category.id == cat.id));
-      let isParent = category && category.parentCategory && category.parentCategory.id == parent.id;
-      let children = childCategories[parent.slug];
-            
-      contents.push(
-        this.attach('layouts-category-link', {
-          category: parent,
-          active: isCurrent(parent),
-          side,
-          toggle: !children,
-          topicTracking
-        })
-      );
-            
-      if ((isCurrent(parent) || isParent) && children) {
-        let childrenList = children.filter(c => excluded.indexOf(c.slug) === -1);
-        let orderedChildrenList = childrenList;
-        let orderByActivity = settings.order_by_activity.split('|').indexOf(parent.slug) > -1;
-        
-        if (orderByActivity) {
-          orderedChildrenList = childrenList.filter(c => c.latest_post_created_at)
-            .sort((a,b) => (new Date(b.latest_post_created_at) - new Date(a.latest_post_created_at)))
-          
-          if (this.currentUser) {
-            let monthSeperators = {1:false,2:false,4:false,6:false};
-            orderedChildrenList.forEach((category, index) => {
-              let addSeperator = null;
-              Object.keys(monthSeperators).forEach((seperator) => {
-                if (!monthSeperators[seperator] && isOlderThanXMonths(category, seperator)) {
-                  monthSeperators[seperator] = true;
-                  addSeperator = seperator;
-                }
-              });
-              if (addSeperator) {
-                orderedChildrenList.splice(index, 0, { seperator: addSeperator });
-              }
-            });
-          }
-        }
-        
-        let childCategoryList = [];
-        
-        orderedChildrenList.some((child, index) => {
-          if (child.seperator) {
-            if (hideExtraChildren &&
-                child.seperator == 1 && 
-                index < (orderedChildrenList.length - 1)) {
-              
-              childCategoryList.push(
-                h('li',
-                  this.attach('button', {
-                    action: 'showExtraChildren',
-                    label: 'show_more',
-                    className: 'btn-small show-extra-children'
-                  })
-                )
-              );
-              return true;
-            } else {
-              childCategoryList.push(
-                h("li.time-gap", [
-                  h('span'),
-                  h('label', I18n.t("dates.medium_with_ago.x_months", {
-                    count: Number(child.seperator)
-                  })),
-                  h('span')
-                ])
-              );
-              return false;
-            }
-          } else {
-            childCategoryList.push(
-              this.attach('layouts-category-link', {
-                category: child,
-                active: isCurrent(child),
-                side,
-                toggle: true,
-                topicTracking
-              })
-            );
-            return false;
-          }
-        });
-        
-        contents.push(h('ul.child-categories', childCategoryList));
-      }
-      
-      return contents;
+    let list = [];
+    categories.forEach(category => {
+      this.addCategory(list, category);
     });
     
-    return h('ul.parent-categories', categoryList);
+    return h('ul.parent-categories', list);
+  },
+  
+  addCategory(list, category, child=false) {
+    const { topicTracking, side } = this.state;
+    const children = this.getChildren(category);
+    const active = this.isCurrent(category);
+    
+    list.push(
+      this.attach('layouts-category-link', {
+        category,
+        active,
+        side,
+        toggleOnClick: children.length == 0,
+        topicTracking
+      })
+    );
+          
+    return this.addChildren(list, category, children, !!child);
+  },
+  
+  addChildren(list, category, children, grandchildren=false) {
+    const showChildren = this.isCurrent(category) ||
+      this.isParentOfCurrent(category) ||
+      this.isGrandparentOfCurrent(category);
+          
+    if (showChildren && children.length > 0) {
+      list.push(
+        h(`ul.child-categories${grandchildren ? '.grandchildren' : ''}`,
+          this.buildChildList(children)
+        )
+      );
+    }
+    
+    return list;
+  },
+  
+  buildChildList(list) {
+    const { hideExtraChildren } = this.state;
+      
+    if (settings.order_by_activity.split('|').indexOf(parent.slug) > -1) {
+      list = this.orderByActivity(list);
+    }
+    
+    let result = [];
+    
+    list.some((category, index) => {
+      if (category.seperator) {
+        if (hideExtraChildren && category.seperator == 1 && index < (list.length - 1)) {
+          result.push(h('li', this.attach('button', {
+            action: 'showExtraChildren',
+            label: 'show_more',
+            className: 'btn-small show-extra-children'
+          })));
+          return true;
+        } else {
+          result.push(h("li.time-gap", [
+            h('span'),
+            h('label', I18n.t("dates.medium_with_ago.x_months", { count: Number(category.seperator) })),
+            h('span')
+          ]));
+          return false;
+        }
+      } else {
+        this.addCategory(result, category, true);
+        return false;
+      }
+    });
+    
+    return result;
   },
   
   showExtraChildren() {
     this.state.hideExtraChildren = false;
     this.scheduleRerender();
+  },
+  
+  orderByActivity(list) {
+    list = list.filter(c => c.latest_post_created_at)
+      .sort((a,b) => (new Date(b.latest_post_created_at) - new Date(a.latest_post_created_at)))
+    
+    if (this.currentUser) {
+      let monthSeperators = {1:false,2:false,4:false,6:false};
+      list.forEach((category, index) => {
+        let addSeperator = null;
+        Object.keys(monthSeperators).forEach((seperator) => {
+          if (!monthSeperators[seperator] && isOlderThanXMonths(category, seperator)) {
+            monthSeperators[seperator] = true;
+            addSeperator = seperator;
+          }
+        });
+        if (addSeperator) {
+          list.splice(index, 0, { seperator: addSeperator });
+        }
+      });
+    }
+    return list;
   }
 });
 
@@ -247,7 +285,7 @@ createWidget('layouts-category-link', {
   },
   
   click() {
-    if (this.attrs.toggle) {
+    if (this.attrs.toggleOnClick) {
       this.appEvents.trigger('sidebar:toggle', {
         side: this.attrs.side,
         value: false,
