@@ -35,6 +35,12 @@
         margin-right: 4px;
       }
       
+      .category-name {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      
       .new-posts {
         margin: 0 10px;
       }
