@@ -111,6 +111,11 @@
   li.layouts-category-link.has-logo + ul.child-categories {
     > li {
       padding-left: 50px;
+      
+      .category-logo {
+        height: 20px;
+        width: 20px;
+      }
     }
     
     ul.child-categories.grandchildren > li {
