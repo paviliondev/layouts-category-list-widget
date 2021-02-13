@@ -14,7 +14,7 @@
       position: relative;
       
       &.active, &:hover {
-        background-color: $primary-low;
+        background-color: var(--primary-low);
       }
 
       .category-logo {
@@ -67,7 +67,7 @@
       margin: 5px 0;
       
       span {
-        border-top: 1px solid $danger-low;
+        border-top: 1px solid var(--danger-low);
         flex: 1;
       }
       
