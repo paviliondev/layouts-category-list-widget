@@ -1,6 +1,6 @@
 .layouts-category-list {
   padding: 10px 0;
-  
+
   ul {
     list-style: none;
 
@@ -12,7 +12,7 @@
       margin: 0;
       cursor: pointer;
       position: relative;
-      
+
       &.active, &:hover {
         background-color: var(--primary-low);
       }
@@ -23,54 +23,56 @@
         width: 25px;
         display: flex;
         justify-content: center;
-        
+        cursor: pointer;
+
         img {
           height: 100%;
           width: 100%;
           object-fit: contain;
         }
       }
-      
+
       .d-icon-lock {
         color: var(--primary-medium);
         font-size: 0.8em;
         margin-right: 4px;
       }
-      
+
       .category-name {
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
+        cursor: pointer;
       }
-      
+
       .new-posts {
         margin: 0 10px;
       }
-      
+
       .active-marker {
         height: 30px;
         width: 3px;
         position: absolute;
         right: 0;
       }
-      
+
       .reset-new {
         margin-left: auto;
       }
     }
-    
+
     .time-gap {
       display: flex;
       align-items: center;
       justify-content: space-between;
       font-size: 0.9em;
       margin: 5px 0;
-      
+
       span {
         border-top: 1px solid var(--danger-low);
         flex: 1;
       }
-      
+
       label {
         margin: 0;
         padding: 0 5px;
@@ -80,12 +82,12 @@
 
   ul.parent-categories {
     margin: 0;
-    
+
     > li {
       &:first-of-type {
         margin-top: 0;
       }
-      
+
       &:last-of-type {
         margin-bottom: 0;
       }
@@ -94,30 +96,30 @@
 
   ul.child-categories {
     margin: 0;
-    
+
     > li {
       padding-left: 30px;
-      
+
       &:last-of-type {
         margin-bottom: 0;
       }
     }
-    
+
     &.grandchildren > li {
       padding-left: 50px;
     }
   }
-  
+
   li.layouts-category-link.has-logo + ul.child-categories {
     > li {
       padding-left: 50px;
-      
+
       .category-logo {
         height: 20px;
         width: 20px;
       }
     }
-    
+
     ul.child-categories.grandchildren > li {
       padding-left: 65px;
     }
