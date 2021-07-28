@@ -24,6 +24,7 @@
         display: flex;
         justify-content: center;
         cursor: pointer;
+        align-items: center;
 
         img {
           height: 100%;
@@ -33,11 +34,11 @@
 
         .category-text-logo {
           border-radius: 9999px;
-          width: 25px;
-          height: 25px;
+          width: 22px;
+          height: 22px;
           text-align: center;
-          line-height: calc(var(--font-0) + .7em);
-          font-size: var(--font-0);
+          line-height: calc(var(--font-down-1) + .8em);
+          font-size: var(--font-down-1);
           color: var(--primary-very-low);
         }
       }
