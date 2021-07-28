@@ -244,6 +244,20 @@ createWidget('layouts-category-link', {
         this.scheduleRerender();
       }
     } 
+
+    if (!category.uploaded_logo && settings.collapsible_sidebar) {
+      contents.push(
+        h('div.category-logo',
+          h('span.category-text-logo', { 
+            attributes: { style: `background-color: #${category.color}` }
+          }, category.name.charAt(0))
+        )
+      )
+      if (state.extraClasses.indexOf('has-logo') === -1) {
+        state.extraClasses.push('has-logo');
+        this.scheduleRerender();
+      }
+    }
     
     if (category.read_restricted) {
       contents.push(iconNode("lock"));

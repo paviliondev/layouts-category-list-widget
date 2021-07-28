@@ -30,6 +30,16 @@
           width: 100%;
           object-fit: contain;
         }
+
+        .category-text-logo {
+          border-radius: 9999px;
+          width: 25px;
+          height: 25px;
+          text-align: center;
+          line-height: calc(var(--font-0) + .7em);
+          font-size: var(--font-0);
+          color: var(--primary-very-low);
+        }
       }
 
       .d-icon-lock {
