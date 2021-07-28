@@ -85,6 +85,10 @@ export default layouts.createLayoutsWidget('category-list', {
       this.addCategory(list, category);
     });
     
+    if (settings.collapsible_sidebar) {
+      list.push(this.attach('layouts-minimize-categories'));
+    }
+
     return h('ul.parent-categories', list);
   },
   
@@ -185,6 +189,54 @@ export default layouts.createLayoutsWidget('category-list', {
     return list;
   }
 });
+
+createWidget('layouts-minimize-categories', {
+  tagName: 'li.layouts-minimize-button.layouts-category-link',
+  buildKey: (attrs) => 'layouts-minimize-categories',
+  
+  defaultState(attrs) {
+    return {
+      sidebarMinimized: false
+    }
+  },
+
+  html(attrs, state) {
+    let contents = [];
+    const minimizeIcon = h('div.category-logo.minimize-icon', iconNode('chevron-circle-left'));
+    const minimizeText = h('div.category-name.minimize-text', I18n.t(themePrefix("minimize_button_label")));
+
+    contents.push(minimizeIcon);
+    contents.push(minimizeText);
+
+    return contents;
+  },
+  
+  click(attrs) {
+    const categoryDetails = document.querySelectorAll('.layouts-category-link .category-name, .layouts-category-link .d-icon-lock');
+    const sidebar = document.querySelector('aside.sidebar');
+    const minimizeIcon = document.querySelector('.minimize-icon');
+    const siteSettings = this.register.lookup("site-settings:main");
+    const sidebarLeftWidth = siteSettings.layouts_sidebar_left_width;
+    
+    if (!this.state.sidebarMinimized) {
+      categoryDetails.forEach((category) => {
+        category.classList.add('hide-category-details');
+      })
+      sidebar.style.width = 'max-content';
+      document.body.classList.add('undo-push-right');
+      minimizeIcon.style.transform = 'rotate(180deg)';
+      this.state.sidebarMinimized = true;
+    } else {
+      categoryDetails.forEach((category) => {
+        category.classList.remove('hide-category-details');
+      })
+      document.body.classList.remove('undo-push-right');
+      sidebar.style.width = `${sidebarLeftWidth}px`;
+      this.state.sidebarMinimized = false;
+      minimizeIcon.style.transform = 'rotate(0deg)';
+    }
+  }
+})
 
 createWidget('layouts-category-link', {
   tagName: 'li',

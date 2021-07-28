@@ -6,5 +6,8 @@
   },
   "color_schemes": {
   },
-  "component": true
+  "component": true,
+  "modifiers": {
+    "svg_icons": ["chevron-circle-left"]
+  }
 }
