@@ -200,15 +200,11 @@ createWidget('layouts-minimize-categories', {
     }
   },
 
-  html(attrs, state) {
-    let contents = [];
-    const minimizeIcon = h('div.category-logo.minimize-icon', iconNode('chevron-circle-left'));
-    const minimizeText = h('div.category-name.minimize-text', I18n.t(themePrefix("minimize_button_label")));
-
-    contents.push(minimizeIcon);
-    contents.push(minimizeText);
-
-    return contents;
+  html() {
+    return [
+      h('div.category-logo.minimize-icon', iconNode('chevron-circle-left')),
+      h('div.category-name.minimize-text', I18n.t(themePrefix("minimize_button_label")))
+    ]
   },
   
   click(attrs) {
