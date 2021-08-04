@@ -200,37 +200,28 @@ createWidget('layouts-minimize-categories', {
     }
   },
 
-  html() {
+  html(attrs, state) {
+    const { sidebarMinimized } = state;
+    let iconClasses = sidebarMinimized ? 'minimized' : '';
     return [
-      h('div.category-logo.minimize-icon', iconNode('chevron-circle-left')),
+      h(`div.category-logo.minimize-icon.${iconClasses}`, iconNode('chevron-circle-left')),
       h('div.category-name.minimize-text', I18n.t(themePrefix("minimize_button_label")))
     ]
   },
   
   click(attrs) {
-    const categoryDetails = document.querySelectorAll('.layouts-category-link .category-name, .layouts-category-link .d-icon-lock');
-    const sidebar = document.querySelector('aside.sidebar');
-    const minimizeIcon = document.querySelector('.minimize-icon');
-    const siteSettings = this.register.lookup("site-settings:main");
-    const sidebarLeftWidth = siteSettings.layouts_sidebar_left_width;
-    
-    if (!this.state.sidebarMinimized) {
-      categoryDetails.forEach((category) => {
-        category.classList.add('hide-category-details');
-      })
-      sidebar.style.width = 'max-content';
-      document.body.classList.add('undo-push-right');
-      minimizeIcon.style.transform = 'rotate(180deg)';
-      this.state.sidebarMinimized = true;
-    } else {
-      categoryDetails.forEach((category) => {
-        category.classList.remove('hide-category-details');
-      })
-      document.body.classList.remove('undo-push-right');
-      sidebar.style.width = `${sidebarLeftWidth}px`;
-      this.state.sidebarMinimized = false;
-      minimizeIcon.style.transform = 'rotate(0deg)';
-    }
+    this.state.sidebarMinized = !this.state.sidebarMinimized;
+    this.scheduleRerender();
+    this.notifyMinimizedStateChange();
+  },
+
+  notifyMinimizedStateChange() {
+    this.appEvents.trigger('sidebar:toggle', {
+      side: this.attrs.side,
+      value: this.state.sidebarMinimized,
+      target: 'desktop',
+      type: 'minimize'
+    });
   }
 })
 
