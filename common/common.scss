@@ -162,6 +162,6 @@
   }
   
   &.layouts-left-full #main-outlet {
-    padding-left: 0;
+    padding-left: calc(var(--mainLeftOffset) - 15%);
   }
 }
