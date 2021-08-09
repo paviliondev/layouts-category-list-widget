@@ -210,17 +210,25 @@ createWidget('layouts-minimize-categories', {
   },
   
   click(attrs) {
-    this.state.sidebarMinized = !this.state.sidebarMinimized;
+    this.state.sidebarMinimized = !this.state.sidebarMinimized;
     this.scheduleRerender();
     this.notifyMinimizedStateChange();
   },
 
   notifyMinimizedStateChange() {
+    let type;
+
+    if (this.state.sidebarMinimized) {
+      type = 'minimize'
+    } else {
+      type = 'expanded'
+    }
+    
     this.appEvents.trigger('sidebar:toggle', {
       side: this.attrs.side,
-      value: this.state.sidebarMinimized,
+      value: true,
       target: 'desktop',
-      type: 'minimize'
+      type: type
     });
   }
 })

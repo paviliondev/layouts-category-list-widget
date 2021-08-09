@@ -116,10 +116,6 @@
       color: var(--primary-high);
     }
   }
-
-  .hide-category-details {
-    display: none;
-  }
  
   ul.child-categories {
     margin: 0;
@@ -153,7 +149,19 @@
   }
 }
 
-.undo-push-right #main-outlet {
-  padding-left: 0;
-  padding-right: 0;
+
+.sidebar-minimized {
+  .layouts-category-list .layouts-category-link {
+    .category-name, .d-icon-lock {
+      display: none;
+    }
+  }
+
+  .minimize-icon {
+    transform: rotate(180deg);
+  }
+  
+  &.layouts-left-full #main-outlet {
+    padding-left: 0;
+  }
 }
