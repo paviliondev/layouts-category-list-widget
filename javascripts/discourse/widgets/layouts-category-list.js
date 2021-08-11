@@ -233,7 +233,7 @@ createWidget('layouts-category-link', {
     
     if (category.uploaded_logo) {   
       contents.push(
-        h('div.category-logo',
+        h(`div.category-logo.cat-${category.id}`,
           h('img', {
             attributes: { src: category.uploaded_logo.url }
           })
