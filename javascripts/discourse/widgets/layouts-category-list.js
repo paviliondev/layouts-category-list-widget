@@ -77,14 +77,19 @@ export default layouts.createLayoutsWidget('category-list', {
   html(attrs, state) {
     const { category } = attrs;
     const categories = this.getParents();
-    
+    const mobileView = this.site.mobileView;
+
     if (!categories) return '';
-    
+
     let list = [];
     categories.forEach(category => {
       this.addCategory(list, category);
     });
-    
+
+    if (!mobileView && settings.collapsible_sidebar) {
+      list.push(this.attach('layouts-minimize-categories'));
+    }
+
     return h('ul.parent-categories', list);
   },
   
@@ -186,6 +191,43 @@ export default layouts.createLayoutsWidget('category-list', {
   }
 });
 
+createWidget('layouts-minimize-categories', {
+  tagName: 'li.layouts-minimize-button.layouts-category-link',
+  buildKey: (attrs) => 'layouts-minimize-categories',
+  
+  defaultState(attrs) {
+    return {
+      sidebarMinimized: false
+    }
+  },
+
+  html(attrs, state) {
+    const { sidebarMinimized } = state;
+    let iconClasses = sidebarMinimized ? 'minimized' : '';
+    return [
+      h(`div.category-logo.minimize-icon.${iconClasses}`, iconNode('chevron-circle-left')),
+      h('div.category-name.minimize-text', I18n.t(themePrefix("minimize_button_label")))
+    ]
+  },
+  
+  click(attrs) {
+    this.state.sidebarMinimized = !this.state.sidebarMinimized;
+    this.scheduleRerender();
+    this.notifyMinimizedStateChange();
+  },
+
+  notifyMinimizedStateChange() {
+    let type;
+    
+    this.appEvents.trigger('sidebar:toggle', {
+      side: this.attrs.side,
+      value: this.state.sidebarMinimized,
+      target: 'desktop',
+      type: 'minimize'
+    });
+  }
+})
+
 createWidget('layouts-category-link', {
   tagName: 'li',
   buildKey: (attrs) => `layouts-category-link-${attrs.category.id}`,
@@ -244,6 +286,20 @@ createWidget('layouts-category-link', {
         this.scheduleRerender();
       }
     } 
+
+    if (!category.uploaded_logo && settings.collapsible_sidebar) {
+      contents.push(
+        h('div.category-logo',
+          h('span.category-text-logo', { 
+            attributes: { style: `background-color: #${category.color}` }
+          }, category.name.charAt(0))
+        )
+      )
+      if (state.extraClasses.indexOf('has-logo') === -1) {
+        state.extraClasses.push('has-logo');
+        this.scheduleRerender();
+      }
+    }
     
     if (category.read_restricted) {
       contents.push(iconNode("lock"));

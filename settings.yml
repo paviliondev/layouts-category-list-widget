@@ -13,3 +13,8 @@ show_latest:
   default: ""
   description:
     en: "Categories to show latest (unread + new) topic counts for"
+collapsible_sidebar:
+  type: bool
+  default: false
+  description:
+    en: "Adds the ability to collapse the sidebar to show only category logos. This setting will also create a category logo when one is not present."
