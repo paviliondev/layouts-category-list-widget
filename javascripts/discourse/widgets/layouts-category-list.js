@@ -77,15 +77,16 @@ export default layouts.createLayoutsWidget('category-list', {
   html(attrs, state) {
     const { category } = attrs;
     const categories = this.getParents();
-    
+    const mobileView = this.site.mobileView;
+
     if (!categories) return '';
-    
+
     let list = [];
     categories.forEach(category => {
       this.addCategory(list, category);
     });
-    
-    if (settings.collapsible_sidebar) {
+
+    if (!mobileView && settings.collapsible_sidebar) {
       list.push(this.attach('layouts-minimize-categories'));
     }
 
@@ -217,18 +218,12 @@ createWidget('layouts-minimize-categories', {
 
   notifyMinimizedStateChange() {
     let type;
-
-    if (this.state.sidebarMinimized) {
-      type = 'minimize'
-    } else {
-      type = 'expanded'
-    }
     
     this.appEvents.trigger('sidebar:toggle', {
       side: this.attrs.side,
-      value: true,
+      value: this.state.sidebarMinimized,
       target: 'desktop',
-      type: type
+      type: 'minimize'
     });
   }
 })
