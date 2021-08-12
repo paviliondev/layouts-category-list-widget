@@ -34,11 +34,15 @@
         }
 
         .category-text-logo {
-          border-radius: 9999px;
-          width: 22px;
-          height: 22px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          min-width: 25px;
+          width: 25px;
+          height: 25px;
           text-align: center;
-          line-height: calc(var(--font-down-1) + .8em);
+          line-height: var(--font-down-1);
           font-size: var(--font-down-1);
           color: var(--primary-very-low);
         }
@@ -113,6 +117,7 @@
     border-top: 2px solid var(--primary-low);
     
     .minimize-icon {
+      font-size: var(--font-up-1);
       color: var(--primary-high);
     }
   }
@@ -138,8 +143,8 @@
       padding-left: 50px;
 
       .category-logo {
-        height: 20px;
-        width: 20px;
+        height: 25px;
+        width: 25px;
       }
     }
 
@@ -166,10 +171,21 @@
   }
 
   .layouts-category-list li.layouts-category-link.has-logo+ul.child-categories>li {
-    padding-left: 23px;
+    padding-left: 20px;
   }
 
   .layouts-category-list li.layouts-category-link.has-logo+ul.child-categories ul.child-categories.grandchildren>li {
-    padding-left: 23px;
+    padding-left: 20px;
+  }
+
+  .layouts-category-list ul li.layouts-category-link .category-logo {
+    margin-right: 0;
+  }
+
+  ul.child-categories {
+    background: var(--primary-low);
+    li.active {
+      background: var(--primary-low);
+    }
   }
 }
