@@ -164,4 +164,12 @@
   &.layouts-left-full #main-outlet {
     padding-left: 6rem;
   }
+
+  .layouts-category-list li.layouts-category-link.has-logo+ul.child-categories>li {
+    padding-left: 23px;
+  }
+
+  .layouts-category-list li.layouts-category-link.has-logo+ul.child-categories ul.child-categories.grandchildren>li {
+    padding-left: 23px;
+  }
 }
