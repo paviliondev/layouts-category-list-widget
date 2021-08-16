@@ -75,9 +75,8 @@ export default layouts.createLayoutsWidget('category-list', {
   },
   
   html(attrs, state) {
-    const { category } = attrs;
+    const { category, mobileView, tabletView } = attrs;
     const categories = this.getParents();
-    const mobileView = this.site.mobileView;
 
     if (!categories) return '';
 
@@ -87,7 +86,13 @@ export default layouts.createLayoutsWidget('category-list', {
     });
 
     if (!mobileView && settings.collapsible_sidebar) {
-      list.push(this.attach('layouts-minimize-categories'));
+      let minimizeButton = this.attach('layouts-minimize-categories', attrs);
+
+      if (tabletView) {
+        list.unshift(minimizeButton);
+      } else {
+        list.push(minimizeButton);
+      }
     }
 
     return h('ul.parent-categories', list);
@@ -193,35 +198,46 @@ export default layouts.createLayoutsWidget('category-list', {
 
 createWidget('layouts-minimize-categories', {
   tagName: 'li.layouts-minimize-button.layouts-category-link',
-  buildKey: (attrs) => 'layouts-minimize-categories',
-  
-  defaultState(attrs) {
-    return {
-      sidebarMinimized: false
-    }
+
+  buildClasses(attrs) {
+    const { tabletView } = attrs;
+    return tabletView ? 'menu' : '';
   },
 
   html(attrs, state) {
-    const { sidebarMinimized } = state;
+    const { tabletView, sidebarMinimized } = attrs;
+    let result = [];
+
     let iconClasses = sidebarMinimized ? 'minimized' : '';
-    return [
-      h(`div.category-logo.minimize-icon.${iconClasses}`, iconNode('chevron-circle-left')),
-      h('div.category-name.minimize-text', I18n.t(themePrefix("minimize_button_label")))
-    ]
+    let iconKey = tabletView ? (sidebarMinimized ? 'bars' : 'times') : 'chevron-circle-left';
+    let icon = h(`div.category-logo.minimize-icon.${iconClasses}`, iconNode(iconKey));
+    let textKey = tabletView ? "menu_button_label" : "minimize_button_label";
+    let text = h('div.category-name.minimize-text', I18n.t(themePrefix(textKey)));
+
+    if (tabletView) {
+      result.push(text);
+    }
+
+    result.push(icon);
+
+    if (!tabletView) {
+      result.push(text);
+    }
+
+    return result;
   },
-  
+
   click(attrs) {
-    this.state.sidebarMinimized = !this.state.sidebarMinimized;
     this.scheduleRerender();
     this.notifyMinimizedStateChange();
   },
 
   notifyMinimizedStateChange() {
     let type;
-    
+
     this.appEvents.trigger('sidebar:toggle', {
       side: this.attrs.side,
-      value: this.state.sidebarMinimized,
+      value: !this.attrs.sidebarMinimized,
       target: 'desktop',
       type: 'minimize'
     });
@@ -231,22 +247,22 @@ createWidget('layouts-minimize-categories', {
 createWidget('layouts-category-link', {
   tagName: 'li',
   buildKey: (attrs) => `layouts-category-link-${attrs.category.id}`,
-  
+
   defaultState(attrs) {
     const setCats = settings.show_latest.split('|');
     const category = attrs.category;
     const refCats = [category.slug];
-    
+
     if (category.parentCategory) {
       refCats.push(category.parentCategory.slug);
     }
-    
+
     return {
       extraClasses: [],
       showLatest: setCats.filter(c => refCats.indexOf(c) > -1).length
     }
   },
-  
+
   buildAttributes() {
     const { category } = this.attrs;
     return {
@@ -254,7 +270,7 @@ createWidget('layouts-category-link', {
       title: category.name
     };
   },
-  
+
   buildClasses(attrs, state) {
     let classes = 'layouts-category-link';
     if (attrs.active) {
@@ -268,40 +284,41 @@ createWidget('layouts-category-link', {
     }
     return classes;
   },
-  
+
   html(attrs, state) {
     const { category, topicTracking, hasChildren } = attrs;
     let contents = [];
-    
-    if (category.uploaded_logo) {   
-      contents.push(
-        h('div.category-logo', {
-          attributes: { "data-category-id": category.id }
-        },
-          h('img', {
-            attributes: { src: category.uploaded_logo.url }
-          })
-        )
-      )
-      if (state.extraClasses.indexOf('has-logo') === -1) {
-        state.extraClasses.push('has-logo');
-        this.scheduleRerender();
-      }
-    } 
 
-    if (!category.uploaded_logo && settings.collapsible_sidebar) {
-      contents.push(
-        h('div.category-logo',
-          h('span.category-text-logo', { 
-            attributes: { style: `background-color: #${category.color}` }
-          }, category.name.charAt(0))
-        )
-      )
-      if (state.extraClasses.indexOf('has-logo') === -1) {
-        state.extraClasses.push('has-logo');
-        this.scheduleRerender();
+    if (category.uploaded_logo || settings.collapsible_sidebar) {
+      let logoContents;
+
+      if (category.uploaded_logo) {
+        logoContents = h('img', {
+          attributes: {
+            src: category.uploaded_logo.url
+          }
+        });
+
+        if (state.extraClasses.indexOf('has-logo') === -1) {
+          state.extraClasses.push('has-logo');
+          this.scheduleRerender();
+        }
+      } else {
+        logoContents = h('span.category-text-logo', { 
+          attributes: {
+            style: `background-color: #${category.color}` 
+          }
+        }, category.name.charAt(0));
       }
-    }
+
+      contents.push(
+        h(`div.category-logo.${category.slug}`, {
+          attributes: {
+            "data-category-id": category.id
+          }
+        }, logoContents)
+      )  
+    } 
     
     if (category.read_restricted) {
       contents.push(iconNode("lock"));
@@ -332,7 +349,7 @@ createWidget('layouts-category-link', {
       this.appEvents.trigger('sidebar:toggle', {
         side: this.attrs.side,
         value: false,
-        target: 'responsive'
+        target: 'mobile'
       });
     }
     DiscourseURL.routeTo(this.attrs.category.url);
