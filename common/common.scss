@@ -184,8 +184,8 @@ aside.sidebar.full.tablet {
   box-shadow: 2px 0 4px -1px rgba(0, 0, 0, .25);
 }
 
-.layouts-sidebar-minimized {
-  ul.layouts-category-list li.layouts-category-link {
+.layouts-sidebar-minimized aside.sidebar.full.tablet {
+  .layouts-category-list ul li.layouts-category-link {
     .category-name, .d-icon-lock {
       display: none;
     }
@@ -209,10 +209,6 @@ aside.sidebar.full.tablet {
 
   .layouts-category-list li.layouts-category-link.has-logo+ul.child-categories ul.child-categories.grandchildren>li {
     padding-left: 20px;
-  }
-
-  .layouts-category-list ul li.layouts-category-link .category-logo {
-    margin-right: 0;
   }
 
   ul.child-categories {
