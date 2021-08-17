@@ -97,38 +97,36 @@ export default layouts.createLayoutsWidget('category-list', {
 
     return h('ul.parent-categories', list);
   },
-  
+
   addCategory(list, category, child=false) {
     const { topicTracking, side } = this.state;
     const children = this.getChildren(category);
     const active = this.isCurrent(category);
-    
+    const current = this.isCurrent(category) ||
+      this.isParentOfCurrent(category) ||
+      this.isGrandparentOfCurrent(category);
+    const hasChildren = children.length > 0;
+    const showChildren = current && hasChildren;
+
     list.push(
       this.attach('layouts-category-link', {
         category,
         active,
         side,
         topicTracking,
-        hasChildren: children.length > 0
+        hasChildren,
+        showChildren
       })
     );
-          
-    return this.addChildren(list, category, children, !!child);
-  },
-  
-  addChildren(list, category, children, grandchildren=false) {
-    const showChildren = this.isCurrent(category) ||
-      this.isParentOfCurrent(category) ||
-      this.isGrandparentOfCurrent(category);
-          
-    if (showChildren && children.length > 0) {
+
+    if (showChildren) {
       list.push(
-        h(`ul.child-categories${grandchildren ? '.grandchildren' : ''}`,
+        h(`ul.child-categories${!!child ? '.grandchildren' : ''}`,
           this.buildChildList(children, category)
         )
       );
     }
-    
+
     return list;
   },
   
@@ -281,6 +279,9 @@ createWidget('layouts-category-link', {
     }
     if (state.extraClasses.length) {
       classes += ` ${state.extraClasses.join(' ')}`;
+    }
+    if (attrs.showChildren) {
+      classes += ' showing-children';
     }
     return classes;
   },
