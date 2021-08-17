@@ -198,10 +198,6 @@ aside.sidebar.full.tablet {
   .minimize-icon {
     transform: rotate(180deg);
   }
-  
-  &.layouts-left-full #main-outlet {
-    padding-left: 6rem;
-  }
 
   .layouts-category-list li.layouts-category-link.has-logo+ul.child-categories>li {
     padding-left: 20px;
@@ -222,4 +218,8 @@ aside.sidebar.full.tablet {
       background: var(--primary-low);
     }
   }
+}
+
+.layouts-sidebar-minimized.layouts-left-full #main-outlet {
+  padding-left: 6rem;
 }
