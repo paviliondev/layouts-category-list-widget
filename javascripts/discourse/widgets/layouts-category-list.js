@@ -85,6 +85,8 @@ export default layouts.createLayoutsWidget('category-list', {
       this.addCategory(list, category);
     });
 
+    this.addCustomLinks(list);
+
     if (!mobileView && settings.collapsible_sidebar) {
       let minimizeButton = this.attach('layouts-minimize-categories', attrs);
 
@@ -96,6 +98,35 @@ export default layouts.createLayoutsWidget('category-list', {
     }
 
     return h('ul.parent-categories', list);
+  },
+
+  addCustomLinks(list) {
+    if (settings.custom_links) {
+      const customLinks = [];
+      settings.custom_links.split('|').map(link => {
+        let linkItems = link.split(',');
+        let linkItem = {
+          title: linkItems[0],
+          icon: linkItems[1],
+          url: linkItems[2]
+        }
+        return customLinks.push(linkItem);
+      });
+
+      customLinks.forEach(link => {
+        if (settings.custom_links_location === "Above Categories") {
+          list.unshift(
+            this.attach('layouts-custom-link', {
+              link
+            }))
+        } else if (settings.custom_links_location === "Below Categories") {
+          list.push(
+            this.attach('layouts-custom-link', {
+              link
+            }))
+        }
+      })
+    }
   },
 
   addCategory(list, category, child=false) {
@@ -355,5 +386,28 @@ createWidget('layouts-category-link', {
     }
     DiscourseURL.routeTo(this.attrs.category.url);
     return true;
+  }
+})
+
+createWidget('layouts-custom-link', {
+  tagName: 'li.layouts-custom-link.layouts-category-link',
+
+  html(attrs, state) {
+    const { link } = attrs;
+    let result = [];
+
+    let title = h('div.category-name', link.title);
+    let icon = h('div.category-logo', h('img', {
+      attributes: {
+        src: link.icon
+      }
+    }));
+
+    result.push(icon, title);
+    return result;
+  },
+
+  click() {
+    DiscourseURL.routeTo(this.attrs.link.url);
   }
 })

@@ -18,3 +18,16 @@ collapsible_sidebar:
   default: false
   description:
     en: "Adds the ability to collapse the sidebar to show only category logos. This setting will also create a category logo when one is not present."
+custom_links:
+  type: list
+  default: ""
+  description:
+    en: "Add custom links to the category sidebar in the comma separated format: name, icon url, link url"
+custom_links_location:
+  type: enum
+  choices:
+    - "Above Categories"
+    - "Below Categories"
+  default: "Above Categories"
+  description:
+    en: "Select where custom links should appear in the sidebar"
