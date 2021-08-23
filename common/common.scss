@@ -189,8 +189,20 @@ aside.sidebar.full.tablet {
 
 .layouts-sidebar-minimized aside.sidebar.full {
   .layouts-category-list ul li.layouts-category-link {
-    .category-name, .d-icon-lock {
+    .category-name {
       display: none;
+    }
+
+    .d-icon-lock {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+    }
+
+    .badge-notification {
+      position: absolute;
+      top: 4px;
+      right: -2px;
     }
 
     .category-logo {
