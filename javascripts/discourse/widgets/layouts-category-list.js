@@ -156,6 +156,7 @@ export default layouts.createLayoutsWidget('category-list', {
         active,
         side,
         topicTracking,
+        current,
         hasChildren,
         showChildren,
         sidebarMinimized
@@ -217,8 +218,11 @@ export default layouts.createLayoutsWidget('category-list', {
   
   toggleChildren(args) {
     const category = args.category;
-    let hasState = [true, false].includes(args.state);
-    let hideChildren = hasState ? args.state : !this.state.hideChildren[category.id];
+    let hideChildren = false;
+
+    if ([true, false].includes(args.hideChildren)) {
+      hideChildren = args.hideChildren;
+    }
 
     if (!hideChildren) {
       DiscourseURL.routeTo(category.url);
@@ -343,7 +347,14 @@ createWidget('layouts-category-link', {
   },
 
   html(attrs, state) {
-    const { category, topicTracking, hasChildren, showChildren, sidebarMinimized } = attrs;
+    const {
+      category,
+      topicTracking,
+      hasChildren,
+      showChildren,
+      sidebarMinimized,
+      current
+    } = attrs;
     let contents = [];
     let logoContents;
 
@@ -390,11 +401,17 @@ createWidget('layouts-category-link', {
     }
     
     if (hasChildren && !sidebarMinimized) {
+      let actionParam = { category };
+
+      if (current) {
+        actionParam.hideChildren = showChildren;
+      }
+
       contents.push(
         this.attach('button', {
           icon: showChildren ? 'chevron-up' : 'chevron-down',
           action: 'toggleChildren',
-          actionParam: { category },
+          actionParam,
           className: 'toggle-children'
         })
       );
@@ -419,7 +436,7 @@ createWidget('layouts-category-link', {
     }
     this.sendWidgetAction('toggleChildren', {
       category: this.attrs.category,
-      state: false
+      hideChildren: false
     });
     return true;
   }
