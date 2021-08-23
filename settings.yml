@@ -22,12 +22,9 @@ custom_links:
   type: list
   default: ""
   description:
-    en: "Add custom links to the category sidebar in the comma separated format: name, icon url, link url"
-custom_links_location:
-  type: enum
-  choices:
-    - "Above Categories"
-    - "Below Categories"
-  default: "Above Categories"
-  description:
-    en: "Select where custom links should appear in the sidebar"
+    en: |
+      Add custom links to the category sidebar.</br>
+      Format (comma seperated): name, icon url, link url, options</br>
+      Options (colon seperated):
+        location: 'above' or 'below', default: 'above';</br>
+        new_tab: 'true' or 'false', default: 'false';

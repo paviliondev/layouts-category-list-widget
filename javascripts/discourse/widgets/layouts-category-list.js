@@ -110,20 +110,29 @@ export default layouts.createLayoutsWidget('category-list', {
           icon: linkItems[1],
           url: linkItems[2]
         }
+
+        let options = {};
+        if (linkItems[3]) {
+          options = linkItems[3].split(';').reduce((result, opt) => {
+            let parts = opt.split(':');
+            if (parts.length > 1) {
+              result[parts[0]] = parts[1];
+            }
+            return result;
+          }, {});
+        }
+        linkItem.options = options;
+
         return customLinks.push(linkItem);
       });
 
       customLinks.forEach(link => {
-        if (settings.custom_links_location === "Above Categories") {
-          list.unshift(
-            this.attach('layouts-custom-link', {
-              link
-            }))
-        } else if (settings.custom_links_location === "Below Categories") {
-          list.push(
-            this.attach('layouts-custom-link', {
-              link
-            }))
+        let linkWidget = this.attach('layouts-custom-link', { link });
+
+        if (link.options.location === "below") {
+          list.push(linkWidget);
+        } else {
+          list.unshift(linkWidget);
         }
       })
     }
@@ -396,10 +405,20 @@ createWidget('layouts-custom-link', {
     const { link } = attrs;
     let result = [];
 
-    let title = h('div.category-name', link.title);
+    let title = h(
+      'div.category-name',
+      {
+        attributes: {
+          title: link.title
+        }
+      },
+      link.title
+    );
+
     let icon = h('div.category-logo', h('img', {
       attributes: {
-        src: link.icon
+        src: link.icon,
+        alt: link.title
       }
     }));
 
@@ -408,6 +427,13 @@ createWidget('layouts-custom-link', {
   },
 
   click() {
-    DiscourseURL.routeTo(this.attrs.link.url);
+    const { link } = this.attrs;
+    const url = link.url;
+
+    if (link.options.new_tab === 'true') {
+      window.open(url, '_blank');
+    } else {
+      DiscourseURL.routeTo(url);
+    }
   }
 })
