@@ -85,6 +85,8 @@ export default layouts.createLayoutsWidget('category-list', {
       this.addCategory(list, category);
     });
 
+    this.addCustomLinks(list);
+
     if (!mobileView && settings.collapsible_sidebar) {
       let minimizeButton = this.attach('layouts-minimize-categories', attrs);
 
@@ -96,6 +98,44 @@ export default layouts.createLayoutsWidget('category-list', {
     }
 
     return h('ul.parent-categories', list);
+  },
+
+  addCustomLinks(list) {
+    if (settings.custom_links) {
+      const customLinks = [];
+      settings.custom_links.split('|').map(link => {
+        let linkItems = link.split(',');
+        let linkItem = {
+          title: linkItems[0],
+          icon: linkItems[1],
+          url: linkItems[2]
+        }
+
+        let options = {};
+        if (linkItems[3]) {
+          options = linkItems[3].split(';').reduce((result, opt) => {
+            let parts = opt.split(':');
+            if (parts.length > 1) {
+              result[parts[0]] = parts[1];
+            }
+            return result;
+          }, {});
+        }
+        linkItem.options = options;
+
+        return customLinks.push(linkItem);
+      });
+
+      customLinks.forEach(link => {
+        let linkWidget = this.attach('layouts-custom-link', { link });
+
+        if (link.options.location === "below") {
+          list.push(linkWidget);
+        } else {
+          list.unshift(linkWidget);
+        }
+      })
+    }
   },
 
   addCategory(list, category, child=false) {
@@ -355,5 +395,45 @@ createWidget('layouts-category-link', {
     }
     DiscourseURL.routeTo(this.attrs.category.url);
     return true;
+  }
+})
+
+createWidget('layouts-custom-link', {
+  tagName: 'li.layouts-custom-link.layouts-category-link',
+
+  html(attrs, state) {
+    const { link } = attrs;
+    let result = [];
+
+    let title = h(
+      'div.category-name',
+      {
+        attributes: {
+          title: link.title
+        }
+      },
+      link.title
+    );
+
+    let icon = h('div.category-logo', h('img', {
+      attributes: {
+        src: link.icon,
+        alt: link.title
+      }
+    }));
+
+    result.push(icon, title);
+    return result;
+  },
+
+  click() {
+    const { link } = this.attrs;
+    const url = link.url;
+
+    if (link.options.new_tab === 'true') {
+      window.open(url, '_blank');
+    } else {
+      DiscourseURL.routeTo(url);
+    }
   }
 })
