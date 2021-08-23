@@ -26,7 +26,8 @@ export default layouts.createLayoutsWidget('category-list', {
     
     return {
       hideExtraChildren: true,
-      topicTracking
+      topicTracking,
+      hideChildren: {}
     }
   },
   
@@ -139,15 +140,15 @@ export default layouts.createLayoutsWidget('category-list', {
   },
 
   addCategory(list, category, child=false) {
-    const { topicTracking, side } = this.state;
+    const { topicTracking, side, hideChildren } = this.state;
     const children = this.getChildren(category);
     const active = this.isCurrent(category);
     const current = this.isCurrent(category) ||
       this.isParentOfCurrent(category) ||
       this.isGrandparentOfCurrent(category);
     const hasChildren = children.length > 0;
-    const showChildren = current && hasChildren;
-
+    const showChildren = current && hasChildren && !hideChildren[category.id];
+    
     list.push(
       this.attach('layouts-category-link', {
         category,
@@ -182,16 +183,16 @@ export default layouts.createLayoutsWidget('category-list', {
     list.some((c, index) => {
       if (c.seperator) {
         if (hideExtraChildren && c.seperator == 1 && index < (list.length - 1)) {
-          result.push(h('li', this.attach('button', {
+          result.push(h('li.show-more', this.attach('button', {
             action: 'showExtraChildren',
-            label: 'show_more',
+            label: 'more',
             className: 'btn-small show-extra-children'
           })));
           return true;
         } else {
           result.push(h("li.time-gap", [
             h('span'),
-            h('label', I18n.t("dates.medium_with_ago.x_months", {
+            h('label', I18n.t("dates.medium.x_months", {
               count: Number(c.seperator)
             })),
             h('span')
@@ -209,6 +210,19 @@ export default layouts.createLayoutsWidget('category-list', {
   
   showExtraChildren() {
     this.state.hideExtraChildren = false;
+    this.scheduleRerender();
+  },
+  
+  toggleChildren(args) {
+    const category = args.category;
+    let hasState = [true, false].includes(args.state);
+    let hideChildren = hasState ? args.state : !this.state.hideChildren[category.id];
+
+    if (!hideChildren) {
+      DiscourseURL.routeTo(category.url);
+    }
+
+    this.state.hideChildren[category.id] = hideChildren;
     this.scheduleRerender();
   },
   
@@ -327,7 +341,7 @@ createWidget('layouts-category-link', {
   },
 
   html(attrs, state) {
-    const { category, topicTracking, hasChildren } = attrs;
+    const { category, topicTracking, hasChildren, showChildren } = attrs;
     let contents = [];
     let logoContents;
 
@@ -373,6 +387,17 @@ createWidget('layouts-category-link', {
       );
     }
     
+    if (hasChildren) {
+      contents.push(
+        this.attach('button', {
+          icon: showChildren ? 'chevron-up' : 'chevron-down',
+          action: 'toggleChildren',
+          actionParam: { category },
+          className: 'toggle-children'
+        })
+      );
+    }
+    
     if (attrs.active) {
       contents.push(h('span.active-marker', { 
         attributes: { style: `background-color: #${category.color}` }
@@ -390,7 +415,10 @@ createWidget('layouts-category-link', {
         target: 'mobile'
       });
     }
-    DiscourseURL.routeTo(this.attrs.category.url);
+    this.sendWidgetAction('toggleChildren', {
+      category: this.attrs.category,
+      state: false
+    });
     return true;
   }
 })

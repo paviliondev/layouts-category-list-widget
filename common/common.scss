@@ -42,6 +42,7 @@
           text-align: center;
           line-height: var(--font-down-1);
           font-size: var(--font-down-1);
+          text-transform: uppercase;
         }
       }
 
@@ -71,6 +72,19 @@
 
       .reset-new {
         margin-left: auto;
+      }
+      
+      .toggle-children {
+        margin-left: auto;
+        padding: 0;
+        background: transparent;
+        
+        &:hover,
+        .d-icon,
+        .d-icon:hover {
+          background: transparent;
+          color: var(--primary-medium);
+        }
       }
     }
 
@@ -213,4 +227,8 @@ aside.sidebar.full.tablet {
 
 .layouts-sidebar-minimized.layouts-left-full #main-outlet {
   padding-left: 6rem;
+}
+
+.show-more {
+  text-align: center;
 }
