@@ -14,10 +14,6 @@
       cursor: pointer;
       position: relative;
 
-      &.active, &:hover {
-        background-color: var(--primary-low);
-      }
-
       .category-logo {
         margin-right: 5px;
         height: 25px;
@@ -100,7 +96,8 @@
     }
   }
 
-  ul.parent-categories {
+  ul.parent-categories,
+  ul.child-categories {
     margin: 0;
 
     > li {
@@ -147,34 +144,36 @@
     }
   }
 
-  ul.child-categories {
-    margin: 0;
+  ul.parent-categories {
+    li.layouts-category-link {
+      &.showing-children,
+      &:hover {
+        background-color: var(--primary-low);
+      }
 
-    > li {
-      padding-left: 30px;
-
-      &:last-of-type {
-        margin-bottom: 0;
+      &.showing-children:hover {
+        background-color: dark-light-diff($primary, $secondary, 85%, -70%);
       }
     }
 
-    &.grandchildren > li {
-      padding-left: 50px;
-    }
-  }
+    ul.child-categories {
+      background-color: var(--primary-low);
 
-  li.layouts-category-link.has-logo + ul.child-categories {
-    > li {
-      padding-left: 50px;
-
-      .category-logo {
-        height: 25px;
-        width: 25px;
+      li.layouts-category-link {
+        &:hover {
+          background-color: dark-light-diff($primary, $secondary, 85%, -70%);
+        }
       }
-    }
 
-    ul.child-categories.grandchildren > li {
-      padding-left: 65px;
+      &.grandchildren {
+        background-color: dark-light-diff($primary, $secondary, 85%, -70%);
+
+        li.layouts-category-link {
+          &:hover {
+            background-color: var(--primary-medium);
+          }
+        }
+      }
     }
   }
 }
@@ -212,26 +211,6 @@ aside.sidebar.full.tablet {
 
   .minimize-icon {
     transform: rotate(180deg);
-  }
-
-  .layouts-category-list li.layouts-category-link.has-logo+ul.child-categories>li {
-    padding-left: 20px;
-  }
-
-  .layouts-category-list li.layouts-category-link.has-logo+ul.child-categories ul.child-categories.grandchildren>li {
-    padding-left: 20px;
-  }
-
-  ul.child-categories {
-    background: var(--primary-low);
-
-    li {
-      padding-left: 20px;
-    }
-
-    li.active {
-      background: var(--primary-low);
-    }
   }
 }
 
