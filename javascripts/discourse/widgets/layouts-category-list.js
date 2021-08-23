@@ -345,7 +345,7 @@ createWidget('layouts-category-link', {
     } else if (settings.auto_generate_category_logos) {
       logoContents = h('span.category-text-logo', { 
         attributes: {
-          style: `background-color: #${category.color}` 
+          style: `border: 1px solid #${category.color}` 
         }
       }, category.name.charAt(0));
     }

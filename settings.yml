@@ -22,7 +22,7 @@ auto_generate_category_logos:
   type: bool
   default: false
   description:
-    en: This setting will also create a category logo when one is not present.
+    en: Create a category logo when one is not present.
 custom_links:
   type: list
   default: ""

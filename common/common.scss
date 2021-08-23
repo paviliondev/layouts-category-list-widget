@@ -15,7 +15,6 @@
       position: relative;
 
       .category-logo {
-        margin-right: 5px;
         height: 25px;
         width: 25px;
         min-width: 25px;
@@ -24,7 +23,7 @@
         cursor: pointer;
         align-items: center;
         padding: 0;
-        margin: 0 5px 0 0;
+        margin: 0 10px 0 0;
         border: none;
 
         img, span::before {
@@ -37,14 +36,12 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 50%;
           min-width: 25px;
           width: 25px;
           height: 25px;
           text-align: center;
           line-height: var(--font-down-1);
           font-size: var(--font-down-1);
-          color: var(--primary-very-low);
         }
       }
 
