@@ -141,6 +141,7 @@ export default layouts.createLayoutsWidget('category-list', {
 
   addCategory(list, category, child=false) {
     const { topicTracking, side, hideChildren } = this.state;
+    const { sidebarMinimized } = this.attrs;
     const children = this.getChildren(category);
     const active = this.isCurrent(category);
     const current = this.isCurrent(category) ||
@@ -156,7 +157,8 @@ export default layouts.createLayoutsWidget('category-list', {
         side,
         topicTracking,
         hasChildren,
-        showChildren
+        showChildren,
+        sidebarMinimized
       })
     );
 
@@ -341,7 +343,7 @@ createWidget('layouts-category-link', {
   },
 
   html(attrs, state) {
-    const { category, topicTracking, hasChildren, showChildren } = attrs;
+    const { category, topicTracking, hasChildren, showChildren, sidebarMinimized } = attrs;
     let contents = [];
     let logoContents;
 
@@ -387,7 +389,7 @@ createWidget('layouts-category-link', {
       );
     }
     
-    if (hasChildren) {
+    if (hasChildren && !sidebarMinimized) {
       contents.push(
         this.attach('button', {
           icon: showChildren ? 'chevron-up' : 'chevron-down',
