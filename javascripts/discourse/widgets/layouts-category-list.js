@@ -329,37 +329,34 @@ createWidget('layouts-category-link', {
   html(attrs, state) {
     const { category, topicTracking, hasChildren } = attrs;
     let contents = [];
+    let logoContents;
 
-    if (category.uploaded_logo || settings.auto_generate_category_logos) {
-      let logoContents;
-
-      if (category.uploaded_logo) {
-        logoContents = h('img', {
-          attributes: {
-            src: category.uploaded_logo.url
-          }
-        });
-
-        if (state.extraClasses.indexOf('has-logo') === -1) {
-          state.extraClasses.push('has-logo');
-          this.scheduleRerender();
+    if (category.uploaded_logo) {
+      logoContents = h('img', {
+        attributes: {
+          src: category.uploaded_logo.url
         }
-      } else if (settings.auto_generate_category_logos) {
-        logoContents = h('span.category-text-logo', { 
-          attributes: {
-            style: `background-color: #${category.color}` 
-          }
-        }, category.name.charAt(0));
-      }
+      });
 
-      contents.push(
-        h(`div.category-logo.${category.slug}`, {
-          attributes: {
-            "data-category-id": category.id
-          }
-        }, logoContents)
-      )  
-    } 
+      if (state.extraClasses.indexOf('has-logo') === -1) {
+        state.extraClasses.push('has-logo');
+        this.scheduleRerender();
+      }
+    } else if (settings.auto_generate_category_logos) {
+      logoContents = h('span.category-text-logo', { 
+        attributes: {
+          style: `background-color: #${category.color}` 
+        }
+      }, category.name.charAt(0));
+    }
+
+    contents.push(
+      h(`div.category-logo.${category.slug}`, {
+        attributes: {
+          "data-category-id": category.id
+        }
+      }, logoContents)
+    )  
     
     if (category.read_restricted) {
       contents.push(iconNode("lock"));
