@@ -330,7 +330,7 @@ createWidget('layouts-category-link', {
     const { category, topicTracking, hasChildren } = attrs;
     let contents = [];
 
-    if (category.uploaded_logo || settings.collapsible_sidebar) {
+    if (category.uploaded_logo || settings.auto_generate_category_logos) {
       let logoContents;
 
       if (category.uploaded_logo) {
@@ -344,7 +344,7 @@ createWidget('layouts-category-link', {
           state.extraClasses.push('has-logo');
           this.scheduleRerender();
         }
-      } else {
+      } else if (settings.auto_generate_category_logos) {
         logoContents = h('span.category-text-logo', { 
           attributes: {
             style: `background-color: #${category.color}` 
