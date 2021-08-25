@@ -32,4 +32,5 @@ custom_links:
       Format (comma seperated): name, icon url, link url, options</br>
       Options (semicolon and colon seperated):
         location: above or below;
-        new_tab: true or false;
+        new_tab: true or false;</br>
+      Example: Label,/icon.png,/path,location:below;new_tab:true
