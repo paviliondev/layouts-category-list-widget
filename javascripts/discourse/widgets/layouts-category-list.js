@@ -195,7 +195,7 @@ export default layouts.createLayoutsWidget('category-list', {
         } else {
           result.push(h("li.time-gap", [
             h('span'),
-            h('label', I18n.t("dates.medium.x_months", {
+            h('label', I18n.t("dates.tiny.x_months", {
               count: Number(c.seperator)
             })),
             h('span')
