@@ -30,6 +30,6 @@ custom_links:
     en: |
       Add custom links to the category sidebar.</br>
       Format (comma seperated): name, icon url, link url, options</br>
-      Options (semicolon and colon seperated):</br>
-        location: above or below;</br>
+      Options (semicolon and colon seperated):
+        location: above or below;
         new_tab: true or false;
