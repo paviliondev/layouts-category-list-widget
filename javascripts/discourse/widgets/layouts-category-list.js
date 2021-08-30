@@ -464,7 +464,16 @@ createWidget('layouts-category-link', {
 })
 
 createWidget('layouts-custom-link', {
-  tagName: 'li.layouts-custom-link.layouts-category-link',
+  tagName: 'li',
+
+  buildClasses(attrs) {
+    const { link } = attrs;
+    let classes = 'layouts-custom-link layouts-category-link';
+    if (link.url === window.location.pathname) {
+      classes += ' active';
+    }
+    return classes;
+  },
 
   html(attrs, state) {
     const { link } = attrs;
