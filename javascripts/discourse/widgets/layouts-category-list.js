@@ -149,7 +149,9 @@ export default layouts.createLayoutsWidget('category-list', {
       this.isGrandparentOfCurrent(category);
     const hasChildren = children.length > 0;
     const showChildren = current && hasChildren && !hideChildren[category.id];
-    
+    const customLogos = this.customLogos();
+    const customLogoUrl = customLogos[category.slug];
+
     list.push(
       this.attach('layouts-category-link', {
         category,
@@ -159,7 +161,8 @@ export default layouts.createLayoutsWidget('category-list', {
         current,
         hasChildren,
         showChildren,
-        sidebarMinimized
+        sidebarMinimized,
+        customLogoUrl
       })
     );
 
@@ -173,16 +176,16 @@ export default layouts.createLayoutsWidget('category-list', {
 
     return list;
   },
-  
+
   buildChildList(list, category) {
     const { hideExtraChildren } = this.state;
-    
+
     if (settings.order_by_activity.split('|').indexOf(category.slug) > -1) {
       list = this.orderByActivity(list);
     }
-    
+
     let result = [];
-    
+
     list.some((c, index) => {
       if (c.seperator) {
         if (hideExtraChildren && c.seperator == 1 && index < (list.length - 1)) {
@@ -207,15 +210,15 @@ export default layouts.createLayoutsWidget('category-list', {
         return false;
       }
     });
-    
+
     return result;
   },
-  
+
   showExtraChildren() {
     this.state.hideExtraChildren = false;
     this.scheduleRerender();
   },
-  
+
   toggleChildren(args) {
     const category = args.category;
     let hideChildren = false;
@@ -231,11 +234,11 @@ export default layouts.createLayoutsWidget('category-list', {
     this.state.hideChildren[category.id] = hideChildren;
     this.scheduleRerender();
   },
-  
+
   orderByActivity(list) {
     list = list.filter(c => c.bumped_at)
       .sort((a,b) => (new Date(b.bumped_at) - new Date(a.bumped_at)))
-        
+  
     let monthSeperators = {1:false,2:false,4:false,6:false};
     list.forEach((category, index) => {
       let addSeperator = null;
@@ -251,6 +254,16 @@ export default layouts.createLayoutsWidget('category-list', {
     });
       
     return list;
+  },
+
+  customLogos() {
+    return settings.custom_logos.split('|').reduce((result, item) => {
+      let parts = item.split(/:(.+)/);
+      if (parts.length > 1) {
+        result[parts[0]] = parts[1];
+      }
+      return result;
+    }, {});
   }
 });
 
@@ -353,15 +366,23 @@ createWidget('layouts-category-link', {
       hasChildren,
       showChildren,
       sidebarMinimized,
-      current
+      current,
+      customLogoUrl
     } = attrs;
     let contents = [];
     let logoContents;
+    let logoUrl;
 
-    if (category.uploaded_logo) {
+    if (customLogoUrl) {
+      logoUrl = customLogoUrl;
+    } else if (category.uploaded_logo) {
+      logoUrl = category.uploaded_logo.url;
+    }
+
+    if (logoUrl) {
       logoContents = h('img', {
         attributes: {
-          src: category.uploaded_logo.url
+          src: logoUrl
         }
       });
 

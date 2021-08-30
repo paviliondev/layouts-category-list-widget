@@ -23,6 +23,14 @@ auto_generate_category_logos:
   default: false
   description:
     en: Create a category logo when one is not present.
+custom_logos:
+  type: list
+  default: ""
+  description:
+    en: |
+      List of custom category logos for the category list widget. Takes precedence over
+      other category logos.</br>
+      Format: category_slug:image_url
 custom_links:
   type: list
   default: ""
