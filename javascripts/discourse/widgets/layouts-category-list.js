@@ -469,9 +469,15 @@ createWidget('layouts-custom-link', {
   buildClasses(attrs) {
     const { link } = attrs;
     let classes = 'layouts-custom-link layouts-category-link';
-    if (link.url === window.location.pathname) {
+
+    let data = Object.assign({}, document.getElementById("data-discourse-setup").dataset);
+    let baseUrl = data && data.baseUrl ? data.baseUrl : '';
+    let url = baseUrl + link.url;
+    let currentUrl = window.location.href;
+    if (url === currentUrl) {
       classes += ' active';
     }
+
     return classes;
   },
 
