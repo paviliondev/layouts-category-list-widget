@@ -18,6 +18,14 @@ collapsible_sidebar:
   default: false
   description:
     en: Adds the ability to collapse the sidebar to show only category logos.
+collapsible_sidebar_desktop_toggle:
+  type: enum
+  default: bottom
+  choices:
+    - top
+    - bottom
+  description:
+    en: Location of the desktop sidebar toggle.
 auto_generate_category_logos:
   type: bool
   default: false

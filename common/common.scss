@@ -126,13 +126,20 @@
     margin-top: 2rem;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
-    border-top: 2px solid var(--primary-low);
     width: 100%;
     box-sizing: border-box;
 
     .minimize-icon.category-logo {
       font-size: var(--font-up-1);
       color: var(--primary-high);
+    }
+
+    &.top {
+      border-bottom: 2px solid var(--primary-low);
+    }
+
+    &.bottom {
+      border-top: 2px solid var(--primary-low);
     }
 
     &.menu {

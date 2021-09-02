@@ -89,9 +89,11 @@ export default layouts.createLayoutsWidget('category-list', {
     this.addCustomLinks(list);
 
     if (!mobileView && settings.collapsible_sidebar) {
+      let top = tabletView || settings.collapsible_sidebar_desktop_toggle === 'top';
+      attrs.position = top ? 'top' : 'bottom';
       let minimizeButton = this.attach('layouts-minimize-categories', attrs);
 
-      if (tabletView) {
+      if (top) {
         list.unshift(minimizeButton);
       } else {
         list.push(minimizeButton);
@@ -271,8 +273,14 @@ createWidget('layouts-minimize-categories', {
   tagName: 'li.layouts-minimize-button.layouts-category-link',
 
   buildClasses(attrs) {
-    const { tabletView } = attrs;
-    return tabletView ? 'menu' : '';
+    const { tabletView, position } = attrs;
+    let classes = `${position}`;
+
+    if (tabletView) {
+      classes += ' menu';
+    }
+
+    return classes;
   },
 
   html(attrs, state) {
