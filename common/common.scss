@@ -123,7 +123,6 @@
   }
 
   ul.parent-categories .layouts-minimize-button {
-    margin-top: 2rem;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
     width: 100%;
@@ -136,10 +135,12 @@
 
     &.top {
       border-bottom: 2px solid var(--primary-low);
+      margin-bottom: .75rem;
     }
 
     &.bottom {
       border-top: 2px solid var(--primary-low);
+      margin-top: 2rem;
     }
 
     &.menu {
