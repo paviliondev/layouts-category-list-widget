@@ -405,6 +405,7 @@ createWidget('layouts-category-link', {
         }
       }, category.name.substring(0,1));
     }
+    debugger;
 
     contents.push(
       h(`div.category-logo.${category.slug}`, {
