@@ -403,7 +403,7 @@ createWidget('layouts-category-link', {
         attributes: {
           style: `border: 1px solid #${category.color}` 
         }
-      }, category.name.charAt(0));
+      }, category.name.substing(0,1));
     }
 
     contents.push(
