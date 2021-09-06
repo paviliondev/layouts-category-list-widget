@@ -403,9 +403,8 @@ createWidget('layouts-category-link', {
         attributes: {
           style: `border: 1px solid #${category.color}` 
         }
-      }, category.name.substring(0,1));
+      }, category.name.substring(0,2));
     }
-    debugger;
 
     contents.push(
       h(`div.category-logo.${category.slug}`, {
