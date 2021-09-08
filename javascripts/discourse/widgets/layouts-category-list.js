@@ -343,11 +343,18 @@ createWidget('layouts-category-link', {
   },
 
   buildAttributes() {
-    const { category } = this.attrs;
-    return {
-      "aria-label": category.name,
-      title: category.name
-    };
+    const { category, sidebarMinimized } = this.attrs;
+
+    const attributes = {};
+
+    if (sidebarMinimized) {
+      attributes["data-tooltip"] = category.name;
+    }
+
+    attributes["aria-label"] = category.name;
+    attributes["title"] = category.name;
+
+    return attributes;
   },
 
   buildClasses(attrs, state) {
