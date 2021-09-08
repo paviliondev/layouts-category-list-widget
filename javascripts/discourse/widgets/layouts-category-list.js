@@ -303,6 +303,12 @@ createWidget('layouts-minimize-categories', {
       result.push(text);
     }
 
+    if (localStorage.getItem('leftSidebarMinimized') === "true" && !sidebarMinimized) {
+      this.notifyMinimizedStateChange();
+    } else if (localStorage.getItem('leftSidebarMinimized') === "false" && sidebarMinimized) {
+      this.notifyMinimizedStateChange();
+    }
+    
     return result;
   },
 
@@ -313,6 +319,8 @@ createWidget('layouts-minimize-categories', {
 
   notifyMinimizedStateChange() {
     let type;
+
+    localStorage.setItem('leftSidebarMinimized', !this.attrs.sidebarMinimized);
 
     this.appEvents.trigger('sidebar:toggle', {
       side: this.attrs.side,
