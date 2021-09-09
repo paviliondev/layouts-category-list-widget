@@ -303,9 +303,9 @@ createWidget('layouts-minimize-categories', {
       result.push(text);
     }
 
-    if (localStorage.getItem('leftSidebarMinimized') === "true" && !sidebarMinimized) {
+    if (localStorage.getItem('layouts-left-sidebar-minimized') === "true" && !sidebarMinimized) {
       this.notifyMinimizedStateChange();
-    } else if (localStorage.getItem('leftSidebarMinimized') === "false" && sidebarMinimized) {
+    } else if (localStorage.getItem('layouts-left-sidebar-minimized') === "false" && sidebarMinimized) {
       this.notifyMinimizedStateChange();
     }
     
@@ -320,7 +320,7 @@ createWidget('layouts-minimize-categories', {
   notifyMinimizedStateChange() {
     let type;
 
-    localStorage.setItem('leftSidebarMinimized', !this.attrs.sidebarMinimized);
+    localStorage.setItem('layouts-left-sidebar-minimized', !this.attrs.sidebarMinimized);
 
     this.appEvents.trigger('sidebar:toggle', {
       side: this.attrs.side,
