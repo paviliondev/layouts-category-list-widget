@@ -46,8 +46,8 @@
         }
       }
 
-      // try [class^="d-icon-"] instead
-      .d-icon-lock, .d-icon-unlock, .d-icon-unlock-alt, .d-icon-lock-open, .d-icon-user-secret, .d-icon-user-lock {
+      //.d-icon-lock, .d-icon-unlock, .d-icon-unlock-alt, .d-icon-lock-open, .d-icon-user-secret, .d-icon-user-lock {
+      [class^="d-icon-"] {
         color: var(--primary-medium);
         font-size: 0.8em;
         margin-right: 4px;
