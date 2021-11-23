@@ -387,6 +387,7 @@ createWidget('layouts-category-link', {
     let contents = [];
     let logoContents;
     let logoUrl;
+    let lockIcon = settings.category_lock_icon || "lock"
 
     if (customLogoUrl) {
       logoUrl = customLogoUrl;
@@ -422,7 +423,7 @@ createWidget('layouts-category-link', {
     )  
     
     if (category.read_restricted) {
-      contents.push(iconNode("lock"));
+      contents.push(iconNode(lockIcon, { class: "category-lock-icon" }));
     }
     
     contents.push(
