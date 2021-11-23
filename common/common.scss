@@ -46,7 +46,8 @@
         }
       }
 
-      .d-icon-lock {
+      // try [class^="d-icon-"] instead
+      .d-icon-lock, .d-icon-unlock, .d-icon-unlock-alt, .d-icon-lock-open, .d-icon-user-secret, .d-icon-user-lock {
         color: var(--primary-medium);
         font-size: 0.8em;
         margin-right: 4px;
