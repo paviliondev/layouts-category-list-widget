@@ -423,7 +423,7 @@ createWidget('layouts-category-link', {
     )  
     
     if (category.read_restricted) {
-      contents.push(iconNode(lockIcon));
+      contents.push(iconNode(lockIcon, { class: "category-lock-icon" }));
     }
     
     contents.push(
