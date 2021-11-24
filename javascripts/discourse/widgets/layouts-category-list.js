@@ -82,6 +82,12 @@ export default layouts.createLayoutsWidget('category-list', {
     if (!categories) return '';
 
     let list = [];
+
+    const categoryHeader = this.categoryHeader();
+    if (categoryHeader) {
+      list.push(this.buildHeader(categoryHeader));
+    }
+
     categories.forEach(category => {
       this.addCategory(list, category);
     });
@@ -129,6 +135,11 @@ export default layouts.createLayoutsWidget('category-list', {
         return customLinks.push(linkItem);
       });
 
+      const linkHeaderBelow = this.linkHeader("below");
+      if (linkHeaderBelow) {
+        list.push(this.buildHeader(linkHeaderBelow));
+      }
+
       customLinks.forEach(link => {
         let linkWidget = this.attach('layouts-custom-link', { link });
 
@@ -137,7 +148,12 @@ export default layouts.createLayoutsWidget('category-list', {
         } else {
           list.unshift(linkWidget);
         }
-      })
+      });
+
+      const linkHeaderAbove = this.linkHeader("above");
+      if (linkHeaderAbove) {
+        list.unshift(this.buildHeader(linkHeaderAbove));
+      }
     }
   },
 
@@ -266,6 +282,46 @@ export default layouts.createLayoutsWidget('category-list', {
       }
       return result;
     }, {});
+  },
+
+  customHeaders() {
+    return settings.custom_headers.split('|').map(setting => {
+      let parts = setting.split(',');
+      let options = parts[1] ? parts[1].split(':') : [];
+      return {
+        label: parts[0],
+        type: options[0],
+        position: options[1],
+        link: parts[2]
+      }
+    });
+  },
+
+  categoryHeader() {
+    const headers = this.customHeaders();
+    const categoryHeaders = headers.filter(h => h.type === "categories");
+    return categoryHeaders.length ? categoryHeaders[0] : null;
+  },
+
+  linkHeader(position) {
+    const headers = this.customHeaders();
+    const linkHeaders = headers.filter(h => h.type === "links" && h.position === position);
+    return linkHeaders.length ? linkHeaders[0] : null;
+  },
+
+  buildHeader(header) {
+    let contents = h('h3', { attributes: { title: header.label }}, header.label);
+
+    if (header.link) {
+      contents = h('a', { attributes: { href: header.link }}, contents);
+    }
+  
+    let extraClasses = '';
+    if (!header.link) {
+      extraClasses += '.no-link';
+    }
+  
+    return h(`li.layouts-category-link.header${extraClasses}`, contents);
   }
 });
 

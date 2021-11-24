@@ -61,3 +61,16 @@ category_lock_icon:
     - user-secret
     - user-lock
   description: "Enter the name of a FontAwesome 5 icon to display instead of the lock icon next to private categories."
+custom_headers:
+  type: list
+  default: ""
+  description:
+    en: |
+      Add headers above or below categories and custom links</br>
+      Format (comma seperated): label, type:position, href</br>
+      Options:
+        type: categories or links
+        position (links only): above or below
+        href (optional): valid href</br>
+      Example: Teams,links:below,/teams adds the header "Teams" to the custom links that appear
+      below the category list

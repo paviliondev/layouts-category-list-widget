@@ -11,8 +11,11 @@
       padding-left: 20px;
       padding-right: 20px;
       margin: 0;
-      cursor: pointer;
       position: relative;
+
+      &:not(.no-link) {
+        cursor: pointer;
+      }
 
       .category-logo {
         height: 25px;
@@ -84,6 +87,16 @@
         .d-icon:hover {
           background: transparent;
           color: var(--primary-medium);
+        }
+      }
+
+      &.header {
+        a {
+          color: var(--primary);
+        }
+
+        h3 {
+          margin: 1em 0 .5em;
         }
       }
     }
@@ -166,7 +179,7 @@
   ul.parent-categories {
     li.layouts-category-link {
       &.showing-children,
-      &:hover {
+      &:hover:not(.no-link) {
         background-color: var(--primary-low);
       }
 
