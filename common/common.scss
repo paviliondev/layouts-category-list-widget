@@ -239,6 +239,17 @@ aside.sidebar.full.tablet {
     .category-logo {
       margin-right: 0;
     }
+
+    &.header {
+      border-top: 2px solid var(--primary-low);
+      min-height: unset;
+      padding: 0;
+      margin: 1em 0;
+
+      h3 {
+        margin: 0;
+      }
+    }
   }
 
   .minimize-icon {

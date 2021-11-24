@@ -310,7 +310,9 @@ export default layouts.createLayoutsWidget('category-list', {
   },
 
   buildHeader(header) {
-    let contents = h('h3', { attributes: { title: header.label }}, header.label);
+    const { sidebarMinimized } = this.attrs;
+    let headerContent = sidebarMinimized ? '' : header.label;
+    let contents = h('h3', { attributes: { title: header.label }}, headerContent);
 
     if (header.link) {
       contents = h('a', { attributes: { href: header.link }}, contents);
