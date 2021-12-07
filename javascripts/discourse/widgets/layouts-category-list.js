@@ -470,6 +470,12 @@ createWidget('layouts-category-link', {
           style: `border: 1px solid #${category.color}` 
         }
       }, category.name.substring(0,2));
+    } else if (settings.category_badges) {
+      logoContents = h(`span.badge-wrapper.${category.siteSettings.category_style}`, h('span.badge-category-bg', {
+        attributes: {
+          style: `background-color: #${category.color}`
+        }
+      }));
     }
 
     contents.push(

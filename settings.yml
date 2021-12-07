@@ -26,6 +26,11 @@ collapsible_sidebar_desktop_toggle:
     - bottom
   description:
     en: Location of the desktop sidebar toggle.
+category_badges:
+  type: bool
+  default: false
+  description:
+    en: Enable category colored badges next to the category name.
 auto_generate_category_logos:
   type: bool
   default: false
