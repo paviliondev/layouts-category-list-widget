@@ -488,7 +488,7 @@ createWidget('layouts-category-link', {
 
     if (customLogoUrl) {
       logoUrl = customLogoUrl;
-    } else if (category.uploaded_logo) {
+    } else if (category.uploaded_logo && !settings.disable_category_logos) {
       logoUrl = category.uploaded_logo.url;
     }
 

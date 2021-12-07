@@ -31,6 +31,11 @@ category_badges:
   default: false
   description:
     en: Enable category colored badges next to the category name.
+disable_category_logos:
+  type: bool
+  default: false
+  description:
+    en: Disable category logos from appearing in sidebar.
 auto_generate_category_logos:
   type: bool
   default: false
