@@ -83,6 +83,16 @@ export default layouts.createLayoutsWidget('category-list', {
     return list.filter((c) => excluded.indexOf(c.slug) === -1);
   },
 
+  buildClasses(attrs) {
+    let classes = [];
+
+    if (settings.child_categories_default_state === 'expanded') {
+      classes.push('children-default-expanded');
+    }
+
+    return classes;
+  },
+
   html(attrs, state) {
     const { category, mobileView, tabletView } = attrs;
     const categories = this.getParents();
