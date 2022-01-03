@@ -84,3 +84,12 @@ custom_headers:
         href (optional): valid href</br>
       Example: Teams,links:below,/teams adds the header "Teams" to the custom links that appear
       below the category list
+child_categories_default_state:
+  type: enum
+  default: collapsed
+  choices:
+    - collapsed
+    - expanded
+    - hidden
+  description:
+    en: The default state of child categories in the sidebar.
