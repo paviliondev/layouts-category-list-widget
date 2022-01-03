@@ -1,18 +1,18 @@
 excluded_categories:
   type: list
-  default: ""
+  default: ''
   description:
-    en: "List of excluded category slugs"
+    en: 'List of excluded category slugs'
 order_by_activity:
   type: list
-  default: ""
+  default: ''
   description:
-    en: "Categories where children are ordered by activity"
+    en: 'Categories where children are ordered by activity'
 show_latest:
   type: list
-  default: ""
+  default: ''
   description:
-    en: "Categories to show latest (unread + new) topic counts for"
+    en: 'Categories to show latest (unread + new) topic counts for'
 collapsible_sidebar:
   type: bool
   default: false
@@ -43,7 +43,7 @@ auto_generate_category_logos:
     en: Create a category logo when one is not present.
 custom_logos:
   type: list
-  default: ""
+  default: ''
   description:
     en: |
       List of custom category logos for the category list widget. Takes precedence over
@@ -51,7 +51,7 @@ custom_logos:
       Format: category_slug:image_url
 custom_links:
   type: list
-  default: ""
+  default: ''
   description:
     en: |
       Add custom links to the category sidebar.</br>
@@ -70,10 +70,10 @@ category_lock_icon:
     - lock-open
     - user-secret
     - user-lock
-  description: "Enter the name of a FontAwesome 5 icon to display instead of the lock icon next to private categories."
+  description: 'Enter the name of a FontAwesome 5 icon to display instead of the lock icon next to private categories.'
 custom_headers:
   type: list
-  default: ""
+  default: ''
   description:
     en: |
       Add headers above or below categories and custom links</br>

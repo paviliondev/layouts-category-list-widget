@@ -1,12 +1,12 @@
 {
   "name": "Layouts Category List Widget",
-  "about_url": null,
-  "license_url": null,
+  "about_url": "https://thepavilion.io/t/category-list-widget/3210/6",
+  "license_url": "https://raw.githubusercontent.com/paviliondev/layouts-category-list-widget/main/LICENSE.txt",
+  "component": true,
   "assets": {
   },
   "color_schemes": {
   },
-  "component": true,
   "modifiers": {
     "svg_icons": ["chevron-circle-left"]
   }
