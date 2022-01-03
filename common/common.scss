@@ -29,7 +29,8 @@
         margin: 0 10px 0 0;
         border: none;
 
-        img, span::before {
+        img,
+        span::before {
           height: 100%;
           width: 100%;
           object-fit: contain;
@@ -76,12 +77,12 @@
       .reset-new {
         margin-left: auto;
       }
-      
+
       .toggle-children {
         margin-left: auto;
         padding: 0;
         background: transparent;
-        
+
         &:hover,
         .d-icon,
         .d-icon:hover {
@@ -96,7 +97,7 @@
         }
 
         h3 {
-          margin: 1em 0 .5em;
+          margin: 1em 0 0.5em;
         }
       }
     }
@@ -148,7 +149,7 @@
 
     &.top {
       border-bottom: 2px solid var(--primary-low);
-      margin-bottom: .75rem;
+      margin-bottom: 0.75rem;
     }
 
     &.bottom {
@@ -215,7 +216,7 @@ body.layouts-tablet #main-outlet {
 }
 
 aside.sidebar.full.tablet {
-  box-shadow: 2px 0 4px -1px rgba(0, 0, 0, .25);
+  box-shadow: 2px 0 4px -1px rgba(0, 0, 0, 0.25);
 }
 
 .layouts-sidebar-minimized aside.sidebar.full {
