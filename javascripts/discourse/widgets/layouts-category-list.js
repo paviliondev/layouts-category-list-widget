@@ -67,6 +67,8 @@ export default layouts.createLayoutsWidget('category-list', {
     const { childCategories } = this.attrs;
     if (!childCategories || !category || !childCategories[category.slug])
       return [];
+    if (settings.child_categories_default_state === 'hidden') return [];
+
     return this.filterExclusions(childCategories[category.slug]);
   },
 
