@@ -176,7 +176,11 @@ export default layouts.createLayoutsWidget('category-list', {
       this.isParentOfCurrent(category) ||
       this.isGrandparentOfCurrent(category);
     const hasChildren = children.length > 0;
-    const showChildren = current && hasChildren && !hideChildren[category.id];
+    const childrenAlwaysShown =
+      settings.child_categories_default_state === 'expanded';
+    const shouldExpandChildren = current || childrenAlwaysShown;
+    const showChildren =
+      shouldExpandChildren && hasChildren && !hideChildren[category.id];
     const customLogos = this.customLogos();
     const customLogoUrl = customLogos[category.slug];
 
