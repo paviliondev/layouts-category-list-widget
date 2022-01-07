@@ -67,6 +67,7 @@ export default layouts.createLayoutsWidget('category-list', {
     const { childCategories } = this.attrs;
     if (!childCategories || !category || !childCategories[category.slug])
       return [];
+
     return this.filterExclusions(childCategories[category.slug]);
   },
 
@@ -174,7 +175,11 @@ export default layouts.createLayoutsWidget('category-list', {
       this.isParentOfCurrent(category) ||
       this.isGrandparentOfCurrent(category);
     const hasChildren = children.length > 0;
-    const showChildren = current && hasChildren && !hideChildren[category.id];
+    const childrenDefaultExpanded =
+      settings.child_categories_default_state === 'expanded';
+    const shouldExpandChildren = current || childrenDefaultExpanded;
+    const showChildren =
+      shouldExpandChildren && hasChildren && !hideChildren[category.id];
     const customLogos = this.customLogos();
     const customLogoUrl = customLogos[category.slug];
 

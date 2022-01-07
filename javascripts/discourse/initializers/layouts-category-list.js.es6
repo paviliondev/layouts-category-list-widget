@@ -36,9 +36,11 @@ export default {
     categories.forEach(function (c) {
       let parent = c.parentCategory;
       if (parent) {
-        let siblings = childCategories[parent.slug] || [];
-        siblings.push(c);
-        childCategories[parent.slug] = siblings;
+        if (!settings.hide_subcategories) {
+          let siblings = childCategories[parent.slug] || [];
+          siblings.push(c);
+          childCategories[parent.slug] = siblings;
+        }
       } else {
         parentCategories.push(c);
       }
