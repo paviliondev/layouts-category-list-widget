@@ -265,13 +265,3 @@ aside.sidebar.full.tablet {
 .show-more {
   text-align: center;
 }
-
-.layouts-category-list.children-default-expanded ul.parent-categories {
-  li.layouts-category-link.showing-children,
-  .layouts-category-list
-    ul.parent-categories
-    li.layouts-category-link:hover:not(.no-link),
-  ul.child-categories {
-    background-color: transparent;
-  }
-}
