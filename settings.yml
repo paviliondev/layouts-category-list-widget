@@ -3,6 +3,11 @@ excluded_categories:
   default: ''
   description:
     en: 'List of excluded category slugs'
+hide_subcategories:
+  type: bool
+  default: false
+  description:
+    en: 'If selected, all subcategories will not be shown in the sidebar'
 order_by_activity:
   type: list
   default: ''
@@ -90,6 +95,5 @@ child_categories_default_state:
   choices:
     - collapsed
     - expanded
-    - hidden
   description:
     en: The default state of child categories in the sidebar.
