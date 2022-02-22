@@ -180,8 +180,12 @@ export default layouts.createLayoutsWidget('category-list', {
     const shouldExpandChildren = current || childrenDefaultExpanded;
     const showChildren =
       shouldExpandChildren && hasChildren && !hideChildren[category.id];
-    const customLogos = this.customLogos();
-    const customLogoUrl = customLogos[category.slug];
+    const categoryCustomLogo = this.customLogos().find(
+      (result) => result.category_slug === category.slug
+    );
+    const customLogoUrl = categoryCustomLogo
+      ? categoryCustomLogo.image_url
+      : undefined;
 
     list.push(
       this.attach('layouts-category-link', {
@@ -303,13 +307,7 @@ export default layouts.createLayoutsWidget('category-list', {
   },
 
   customLogos() {
-    return settings.custom_logos.split('|').reduce((result, item) => {
-      let parts = item.split(/:(.+)/);
-      if (parts.length > 1) {
-        result[parts[0]] = parts[1];
-      }
-      return result;
-    }, {});
+    return JSON.parse(settings.custom_logos);
   },
 
   customHeaders() {
@@ -490,12 +488,12 @@ createWidget('layouts-category-link', {
     let logoContents;
     let logoUrl;
     let lockIcon = settings.category_lock_icon || 'lock';
-
     if (customLogoUrl) {
       logoUrl = customLogoUrl;
     } else if (category.uploaded_logo && !settings.disable_category_logos) {
       logoUrl = category.uploaded_logo.url;
     }
+    console.log(category.name, logoUrl);
 
     if (logoUrl) {
       logoContents = h('img', {
