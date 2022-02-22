@@ -119,29 +119,7 @@ export default layouts.createLayoutsWidget('category-list', {
 
   addCustomLinks(list) {
     if (settings.custom_links) {
-      const customLinks = [];
-      settings.custom_links.split('|').map((link) => {
-        let linkItems = link.split(',');
-        let linkItem = {
-          title: linkItems[0],
-          icon: linkItems[1],
-          url: linkItems[2],
-        };
-
-        let options = {};
-        if (linkItems[3]) {
-          options = linkItems[3].split(';').reduce((result, opt) => {
-            let parts = opt.split(':');
-            if (parts.length > 1) {
-              result[parts[0]] = parts[1];
-            }
-            return result;
-          }, {});
-        }
-        linkItem.options = options;
-
-        return customLinks.push(linkItem);
-      });
+      const customLinks = JSON.parse(settings.custom_links);
 
       const linkHeaderBelow = this.linkHeader('below');
       if (linkHeaderBelow) {
@@ -151,7 +129,7 @@ export default layouts.createLayoutsWidget('category-list', {
       customLinks.forEach((link) => {
         let linkWidget = this.attach('layouts-custom-link', { link });
 
-        if (link.options.location === 'below') {
+        if (link.location === 'below') {
           list.push(linkWidget);
         } else {
           list.unshift(linkWidget);
@@ -493,7 +471,6 @@ createWidget('layouts-category-link', {
     } else if (category.uploaded_logo && !settings.disable_category_logos) {
       logoUrl = category.uploaded_logo.url;
     }
-    console.log(category.name, logoUrl);
 
     if (logoUrl) {
       logoContents = h('img', {
@@ -608,7 +585,7 @@ createWidget('layouts-custom-link', {
       document.getElementById('data-discourse-setup').dataset
     );
     let baseUrl = data && data.baseUrl ? data.baseUrl : '';
-    let url = baseUrl + link.url;
+    let url = baseUrl + link.link_url;
     let currentUrl = window.location.href;
     if (url === currentUrl) {
       classes += ' active';
@@ -625,31 +602,35 @@ createWidget('layouts-custom-link', {
       'div.category-name',
       {
         attributes: {
-          title: link.title,
+          title: link.name,
         },
       },
-      link.title
+      link.name
     );
 
-    let icon = h(
-      'div.category-logo',
-      h('img', {
-        attributes: {
-          src: link.icon,
-          alt: link.title,
-        },
-      })
-    );
+    if (link.icon_url !== 'none') {
+      let icon = h(
+        'div.category-logo',
+        h('img', {
+          attributes: {
+            src: link.icon_url,
+            alt: link.name,
+          },
+        })
+      );
 
-    result.push(icon, title);
+      result.push(icon);
+    }
+
+    result.push(title);
     return result;
   },
 
   click() {
     const { link } = this.attrs;
-    const url = link.url;
+    const url = link.link_url;
 
-    if (link.options.new_tab === 'true') {
+    if (link.new_tab === 'true') {
       window.open(url, '_blank');
     } else {
       DiscourseURL.routeTo(url);

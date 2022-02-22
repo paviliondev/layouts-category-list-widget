@@ -47,20 +47,15 @@ auto_generate_category_logos:
   description:
     en: Create a category logo when one is not present.
 custom_logos:
+  description:
+    en: Use custom logos for categories in the sidebar
   default: >-
   json_schema: '{ "type": "array", "format": "table", "uniqueItems": true, "items": { "type": "object", "properties": { "category_slug": { "type": "string", "minLength": 1 }, "image_url": { "type": "string", "minLength": 1 }}, "additionalProperties": false } }'
-
 custom_links:
-  type: list
-  default: ''
   description:
-    en: |
-      Add custom links to the category sidebar.</br>
-      Format (comma seperated): name, icon url, link url, options</br>
-      Options (semicolon and colon seperated):
-        location: above or below;
-        new_tab: true or false;</br>
-      Example: Label,/icon.png,/path,location:below;new_tab:true
+    en: Add custom links to the category sidebar
+  default: >-
+  json_schema: '{ "type": "array", "format": "table", "uniqueItems": true, "items": { "type": "object", "properties": { "name": { "type": "string", "minLength": 1 }, "icon_url": { "type": "string", "minLength": 1, "description": "Type none for no icon"}, "link_url": { "type": "string", "minLength": 1 }, "location": { "type": "string", "minLength": 1, "enum": ["above", "below"] }, "new_tab": { "type": "boolean", "minLength": 1 } }, "additionalProperties": false } }'
 category_lock_icon:
   type: enum
   default: lock
