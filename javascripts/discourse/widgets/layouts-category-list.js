@@ -547,7 +547,7 @@ createWidget('layouts-category-link', {
 
     contents.push(h('div.category-name', category.name));
 
-    const latestTopicCount = topicTracking.lookupCount('latest', category);
+    const latestTopicCount = topicTracking.lookupCount({ type: 'latest', category });
     if (state.showLatest && latestTopicCount > 0) {
       contents.push(
         h('div.badge-notification.new-posts', `${latestTopicCount}`)
