@@ -308,34 +308,10 @@ a.category-link {
   }
 }
 
-.layouts-category-list .logo-only {
-  justify-content: center; /* Center the logo */
-  padding-left: 0;
-  padding-right: 0;
-}
-
-.layouts-category-list .logo-only .category-name,
-.layouts-category-list .logo-only .toggle-children {
-  display: none; /* Hide category name and toggle button */
-}
-
-.layouts-category-list .logo-only .category-logo {
-  margin: 0 auto; /* Center the logo */
-}
-/* Additional rule to manage the display of the minimize button text */
-.layouts-category-list .layouts-minimize-button.minimized .minimize-text {
-  display: block; /* or 'inline', depending on your layout */
-}
-
-/* Rule to manage the state of the minimize icon */
 .layouts-category-list .layouts-minimize-button .minimize-icon {
-  transition: transform 0.3s ease; /* Smooth transition for rotating icon */
+  transition: transform 0.3s ease;
 }
 
-.layouts-category-list .layouts-minimize-button.minimized .minimize-icon {
-  transform: rotate(180deg); /* Rotate icon when minimized */
-}
-/* This rule hides category names when the sidebar is minimized */
 .layouts-sidebar-minimized
   .layouts-category-list
   ul
@@ -344,59 +320,41 @@ a.category-link {
   display: none;
 }
 
-/* This rule ensures the minimize icon is always visible */
-.layouts-category-list .layouts-minimize-button .minimize-icon {
-  display: flex; /* or 'block' depending on your layout */
-}
-
-/* Specific rule to override the hiding behavior for the minimize button */
-.layouts-sidebar-minimized
-  .layouts-category-list
-  .layouts-minimize-button
-  .minimize-icon {
-  display: flex; /* Ensure it remains visible */
-}
-
-.sidebar {
-  height: 100vh;
-  background-color: #caad6f;
-}
-// #main-outlet-wrapper {
-//   margin-left: 0;
-//   padding-left: 0;
-//   margin-right: 0;
-//   padding-right: 0;
-// }
 #main-outlet.with-header {
   padding-top: 0 !important;
 }
 .navigation-container.category-navigation {
   padding-top: 1.5em;
+  border-top: none;
 }
-// .main-content {
-//   margin-left: auto !important;
-//   margin-right: auto !important;
-//   width: 50%;
-// }
-.sidebar.left.absolute {
-  margin-left: 0;
-  padding-left: 0;
+
+aside.sidebar {
+  overflow-y: auto;
+  background: #caad6f;
+  color: var(--secondary);
+  width: 250px;
+  top: 0;
+  height: 100vh;
+  min-height: calc(100vh - 320px);
+  padding-top: 0.5em;
+  position: sticky;
+  top: 60px;
 }
-.content-wrapper {
-  display: flex;
+.plugin-outlet-connector-component {
+  width: 250px;
+  margin-top: 0;
+}
+.widget-container {
+  border-top: none;
+  border-bottom: none;
+}
+.navigation-container {
+  padding-top: 1.5em;
+}
+.category-logo.minimize-icon.minimized {
+  transform: rotate(180deg);
+}
+.main-content.admin {
+  margin-left: 20px;
   margin-right: 20px;
-
-  .sidebar {
-    flex: 0 0 auto !important; // Does not grow or shrink
-  }
-
-  .main-content {
-    flex-grow: 1;
-    justify-content: center;
-  }
-
-  // Optional: use this if you don't have a right-child element
-  .placeholder {
-    flex: 0 0 auto; // Mimics the width of .left-child for balance
-  }
 }
