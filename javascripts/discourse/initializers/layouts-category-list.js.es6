@@ -53,6 +53,6 @@ export default {
       categoryIds,
     };
 
-    layouts.addSidebarProps(props);
+    layouts.addSidebarProps(props, container);
   },
 };

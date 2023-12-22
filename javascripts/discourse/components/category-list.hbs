@@ -1,0 +1,84 @@
+<div class="widget-container layouts-category-list">
+  <ul class="parent-categories">
+    {{#each this.mainCategories as |category|}}
+      <li class="{{if this.sidebarMinimized 'logo-only'}} layouts-custom-link layouts-category-link {{if category.hasLogo 'has-logo'}} {{if category.isActive 'active'}}">
+          {{#if this.generateLogos}}
+          <div class="category-logo {{category.slug}}">
+            {{#if (eq category.logoContent.type "image")}}
+              <img src="{{category.logoContent.url}}" alt="{{category.name}}">
+            {{else}}
+              <span class="category-text-logo" style={{category.logoContent.style}}>
+                {{category.logoContent.text}}
+              </span>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          {{!-- Category Name --}}
+          {{#unless this.sidebarMinimized}}
+            <LinkTo @route="discovery.category" @model={{category.slug}} class="category-link">
+              {{category.name}}
+            </LinkTo>
+          {{/unless}}
+
+        {{!-- Toggle Button for Subcategories --}}
+        {{#if category.hasChildren}}
+          <button {{on "click" (fn this.toggleSubcategories category.id)}} class="toggle-children {{if (eq this.expandedCategory category.id) 'expanded'}}">
+            {{d-icon (if (eq this.expandedCategory category.id) "chevron-up" "chevron-down")}}
+          </button>
+        {{/if}}
+      </li>
+      {{#if (eq this.expandedCategory category.id)}}
+          <ul class="child-categories">
+            {{#each category.subcategories as |subCategory|}}
+              <li class="layouts-category-link {{if subCategory.isActive 'active'}}">
+                <LinkTo @route="discovery.category" @model={{subCategory.id}} class="category-link">
+                  {{#if this.generateLogos}}
+                    <div class="category-logo {{subCategory.slug}}">
+                      {{#if (eq subCategory.logoContent.type "image")}}
+                        <img src="{{subCategory.logoContent.url}}" alt="{{subCategory.name}}">
+                      {{else}}
+                        <span class="category-text-logo" style={{subCategory.logoContent.style}}>
+                          {{subCategory.logoContent.text}}
+                        </span>
+                      {{/if}}
+                    </div>
+                  {{/if}}
+                  {{#unless this.sidebarMinimized}}
+                  <div class="category-name">{{subCategory.name}}</div>
+                  {{/unless}}
+                </LinkTo>
+                {{#if subCategory.isActive}}
+                  <span class="active-marker" style="background-color: {{subCategory.color}}"></span>
+                {{/if}}
+              </li>
+            {{/each}}
+          </ul>
+      {{/if}}
+    {{/each}}
+
+    {{#each this.customLinks as |link|}}
+      <li class="layouts-custom-link">
+        <a href="{{link.url}}" target="{{if link.options.new_tab '_blank'}}">
+          <img src="{{link.icon}}" alt="{{link.title}}">{{link.title}}
+        </a>
+      </li>
+    {{/each}}
+    {{!-- Minimize Button --}}
+    <li class="layouts-minimize-button layouts-category-link bottom">
+      <button {{on "click" this.toggleSidebar}}>
+        <div class="category-logo minimize-icon">
+          {{d-icon (if this.sidebarMinimized "chevron-circle-right" "chevron-circle-left")}}
+        </div>
+        <div class="category-name minimize-text">
+        {{#unless this.sidebarMinimized}}
+          <span>
+        Minimize
+          </span>
+        {{/unless}}
+        </div>
+      </button>
+    </li>
+  </ul>
+
+</div>

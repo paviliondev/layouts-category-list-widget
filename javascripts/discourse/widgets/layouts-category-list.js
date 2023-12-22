@@ -1,14 +1,14 @@
-import { iconNode } from 'discourse-common/lib/icon-library';
-import DiscourseURL from 'discourse/lib/url';
-import { createWidget } from 'discourse/widgets/widget';
-import I18n from 'I18n';
-import { h } from 'virtual-dom';
+import { iconNode } from "discourse-common/lib/icon-library";
+import DiscourseURL from "discourse/lib/url";
+import { createWidget } from "discourse/widgets/widget";
+import I18n from "I18n";
+import { h } from "virtual-dom";
 
 let layouts;
 
 try {
   layouts = requirejs(
-    'discourse/plugins/discourse-layouts/discourse/lib/layouts'
+    "discourse/plugins/discourse-layouts/discourse/lib/layouts"
   );
 } catch (error) {
   layouts = { createLayoutsWidget: createWidget };
@@ -17,24 +17,26 @@ try {
 
 const isOlderThanXMonths = (category, count) => {
   return moment(category.bumped_at).isBefore(
-    moment().subtract(count, 'months')
+    moment().subtract(count, "months")
   );
 };
 
-export default layouts.createLayoutsWidget('category-list', {
+export default layouts.createLayoutsWidget("category-list", {
   defaultState(attrs) {
-    const topicTracking = this.register.lookup('topic-tracking-state:main');
+    let hideChildren = {};
+    this.getParents().forEach((cat) => (hideChildren[cat.id] = true));
+    const topicTracking = this.register.lookup("topic-tracking-state:main");
 
     return {
       hideExtraChildren: true,
       topicTracking,
-      hideChildren: {},
+      hideChildren,
     };
   },
 
   didRenderWidget() {
     const self = this;
-    this.state.topicTracking.addObserver('states', function () {
+    this.state.topicTracking.addObserver("states", function () {
       self.scheduleRerender();
     });
   },
@@ -78,7 +80,7 @@ export default layouts.createLayoutsWidget('category-list', {
   },
 
   filterExclusions(list) {
-    const excluded = settings.excluded_categories.split('|');
+    const excluded = settings.excluded_categories.split("|");
     return list.filter((c) => excluded.indexOf(c.slug) === -1);
   },
 
@@ -86,7 +88,7 @@ export default layouts.createLayoutsWidget('category-list', {
     const { category, mobileView, tabletView } = attrs;
     const categories = this.getParents();
 
-    if (!categories) return '';
+    if (!categories) return "";
 
     let list = [];
 
@@ -103,9 +105,9 @@ export default layouts.createLayoutsWidget('category-list', {
 
     if (!mobileView && settings.collapsible_sidebar) {
       let top =
-        tabletView || settings.collapsible_sidebar_desktop_toggle === 'top';
-      attrs.position = top ? 'top' : 'bottom';
-      let minimizeButton = this.attach('layouts-minimize-categories', attrs);
+        tabletView || settings.collapsible_sidebar_desktop_toggle === "top";
+      attrs.position = top ? "top" : "bottom";
+      let minimizeButton = this.attach("layouts-minimize-categories", attrs);
 
       if (top) {
         list.unshift(minimizeButton);
@@ -114,14 +116,14 @@ export default layouts.createLayoutsWidget('category-list', {
       }
     }
 
-    return h('ul.parent-categories', list);
+    return h("ul.parent-categories", list);
   },
 
   addCustomLinks(list) {
     if (settings.custom_links) {
       const customLinks = [];
-      settings.custom_links.split('|').map((link) => {
-        let linkItems = link.split(',');
+      settings.custom_links.split("|").map((link) => {
+        let linkItems = link.split(",");
         let linkItem = {
           title: linkItems[0],
           icon: linkItems[1],
@@ -130,8 +132,8 @@ export default layouts.createLayoutsWidget('category-list', {
 
         let options = {};
         if (linkItems[3]) {
-          options = linkItems[3].split(';').reduce((result, opt) => {
-            let parts = opt.split(':');
+          options = linkItems[3].split(";").reduce((result, opt) => {
+            let parts = opt.split(":");
             if (parts.length > 1) {
               result[parts[0]] = parts[1];
             }
@@ -143,22 +145,22 @@ export default layouts.createLayoutsWidget('category-list', {
         return customLinks.push(linkItem);
       });
 
-      const linkHeaderBelow = this.linkHeader('below');
+      const linkHeaderBelow = this.linkHeader("below");
       if (linkHeaderBelow) {
         list.push(this.buildHeader(linkHeaderBelow));
       }
 
       customLinks.forEach((link) => {
-        let linkWidget = this.attach('layouts-custom-link', { link });
+        let linkWidget = this.attach("layouts-custom-link", { link });
 
-        if (link.options.location === 'below') {
+        if (link.options.location === "below") {
           list.push(linkWidget);
         } else {
           list.unshift(linkWidget);
         }
       });
 
-      const linkHeaderAbove = this.linkHeader('above');
+      const linkHeaderAbove = this.linkHeader("above");
       if (linkHeaderAbove) {
         list.unshift(this.buildHeader(linkHeaderAbove));
       }
@@ -176,15 +178,14 @@ export default layouts.createLayoutsWidget('category-list', {
       this.isGrandparentOfCurrent(category);
     const hasChildren = children.length > 0;
     const childrenDefaultExpanded =
-      settings.child_categories_default_state === 'expanded';
+      settings.child_categories_default_state === "expanded";
     const shouldExpandChildren = current || childrenDefaultExpanded;
-    const showChildren =
-      shouldExpandChildren && hasChildren && !hideChildren[category.id];
+    const showChildren = hasChildren && !hideChildren[category.id];
     const customLogos = this.customLogos();
     const customLogoUrl = customLogos[category.slug];
 
     list.push(
-      this.attach('layouts-category-link', {
+      this.attach("layouts-category-link", {
         category,
         active,
         side,
@@ -200,7 +201,7 @@ export default layouts.createLayoutsWidget('category-list', {
     if (showChildren) {
       list.push(
         h(
-          `ul.child-categories${!!child ? '.grandchildren' : ''}`,
+          `ul.child-categories${!!child ? ".grandchildren" : ""}`,
           this.buildChildList(children, category)
         )
       );
@@ -212,7 +213,7 @@ export default layouts.createLayoutsWidget('category-list', {
   buildChildList(list, category) {
     const { hideExtraChildren } = this.state;
 
-    if (settings.order_by_activity.split('|').indexOf(category.slug) > -1) {
+    if (settings.order_by_activity.split("|").indexOf(category.slug) > -1) {
       list = this.orderByActivity(list);
     }
 
@@ -223,26 +224,26 @@ export default layouts.createLayoutsWidget('category-list', {
         if (hideExtraChildren && c.seperator == 1 && index < list.length - 1) {
           result.push(
             h(
-              'li.show-more',
-              this.attach('button', {
-                action: 'showExtraChildren',
-                label: 'more',
-                className: 'btn-small show-extra-children',
+              "li.show-more",
+              this.attach("button", {
+                action: "showExtraChildren",
+                label: "more",
+                className: "btn-small show-extra-children",
               })
             )
           );
           return true;
         } else {
           result.push(
-            h('li.time-gap', [
-              h('span'),
+            h("li.time-gap", [
+              h("span"),
               h(
-                'label',
-                I18n.t('dates.tiny.x_months', {
+                "label",
+                I18n.t("dates.tiny.x_months", {
                   count: Number(c.seperator),
                 })
               ),
-              h('span'),
+              h("span"),
             ])
           );
           return false;
@@ -262,19 +263,63 @@ export default layouts.createLayoutsWidget('category-list', {
   },
 
   toggleChildren(args) {
-    const category = args.category;
-    let hideChildren = false;
+    const clickedCategory = args.category;
+    let { hideChildren } = this.state;
 
-    if ([true, false].includes(args.hideChildren)) {
-      hideChildren = args.hideChildren;
-    }
+    // Collapse all categories except the hierarchy of the clicked category
+    Object.keys(hideChildren).forEach((key) => {
+      const categoryId = Number(key);
 
-    if (!hideChildren) {
-      DiscourseURL.routeTo(category.url);
-    }
+      // Check if the category is not part of the current clicked category's hierarchy
+      if (!this.isInHierarchy(clickedCategory, categoryId)) {
+        hideChildren[categoryId] = true;
+      }
+    });
 
-    this.state.hideChildren[category.id] = hideChildren;
+    // Toggle the clicked category
+    hideChildren[clickedCategory.id] = !hideChildren[clickedCategory.id];
+
+    this.state.hideChildren = hideChildren;
     this.scheduleRerender();
+
+    // Navigate to the category URL if it has no children
+    if (!args.hasChildren) {
+      DiscourseURL.routeTo(clickedCategory.url);
+    }
+  },
+
+  isInHierarchy(clickedCategory, categoryId) {
+    // Direct match (clicked category itself)
+    if (clickedCategory.id === categoryId) {
+      return true;
+    }
+
+    // Check if it's a parent of the clicked category
+    let currentCategory = clickedCategory;
+    while (currentCategory.parentCategory) {
+      if (currentCategory.parentCategory.id === categoryId) {
+        return true;
+      }
+      currentCategory = currentCategory.parentCategory;
+    }
+
+    // Check if it's a child of the clicked category
+    // Assuming you have a method `getChildren` that returns an array of child categories
+    const checkChildren = (category) => {
+      const children = this.getChildren(category);
+      for (let child of children) {
+        if (child.id === categoryId) {
+          return true;
+        }
+        // Recursively check children
+        if (checkChildren(child)) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    return checkChildren(clickedCategory);
   },
 
   orderByActivity(list) {
@@ -303,7 +348,7 @@ export default layouts.createLayoutsWidget('category-list', {
   },
 
   customLogos() {
-    return settings.custom_logos.split('|').reduce((result, item) => {
+    return settings.custom_logos.split("|").reduce((result, item) => {
       let parts = item.split(/:(.+)/);
       if (parts.length > 1) {
         result[parts[0]] = parts[1];
@@ -313,9 +358,9 @@ export default layouts.createLayoutsWidget('category-list', {
   },
 
   customHeaders() {
-    return settings.custom_headers.split('|').map((setting) => {
-      let parts = setting.split(',');
-      let options = parts[1] ? parts[1].split(':') : [];
+    return settings.custom_headers.split("|").map((setting) => {
+      let parts = setting.split(",");
+      let options = parts[1] ? parts[1].split(":") : [];
       return {
         label: parts[0],
         type: options[0],
@@ -327,49 +372,49 @@ export default layouts.createLayoutsWidget('category-list', {
 
   categoryHeader() {
     const headers = this.customHeaders();
-    const categoryHeaders = headers.filter((h) => h.type === 'categories');
+    const categoryHeaders = headers.filter((h) => h.type === "categories");
     return categoryHeaders.length ? categoryHeaders[0] : null;
   },
 
   linkHeader(position) {
     const headers = this.customHeaders();
     const linkHeaders = headers.filter(
-      (h) => h.type === 'links' && h.position === position
+      (h) => h.type === "links" && h.position === position
     );
     return linkHeaders.length ? linkHeaders[0] : null;
   },
 
   buildHeader(header) {
     const { sidebarMinimized } = this.attrs;
-    let headerContent = sidebarMinimized ? '' : header.label;
+    let headerContent = sidebarMinimized ? "" : header.label;
     let contents = h(
-      'h3',
+      "h3",
       { attributes: { title: header.label } },
       headerContent
     );
 
     if (header.link) {
-      contents = h('a', { attributes: { href: header.link } }, contents);
+      contents = h("a", { attributes: { href: header.link } }, contents);
     }
 
-    let extraClasses = '';
+    let extraClasses = "";
     if (!header.link) {
-      extraClasses += '.no-link';
+      extraClasses += ".no-link";
     }
 
     return h(`li.layouts-category-link.header${extraClasses}`, contents);
   },
 });
 
-createWidget('layouts-minimize-categories', {
-  tagName: 'li.layouts-minimize-button.layouts-category-link',
+createWidget("layouts-minimize-categories", {
+  tagName: "li.layouts-minimize-button.layouts-category-link",
 
   buildClasses(attrs) {
     const { tabletView, position } = attrs;
     let classes = `${position}`;
 
     if (tabletView) {
-      classes += ' menu';
+      classes += " menu";
     }
 
     return classes;
@@ -379,19 +424,19 @@ createWidget('layouts-minimize-categories', {
     const { tabletView, sidebarMinimized } = attrs;
     let result = [];
 
-    let iconClasses = sidebarMinimized ? 'minimized' : '';
+    let iconClasses = sidebarMinimized ? "minimized" : "";
     let iconKey = tabletView
       ? sidebarMinimized
-        ? 'bars'
-        : 'times'
-      : 'chevron-circle-left';
+        ? "bars"
+        : "times"
+      : "chevron-circle-left";
     let icon = h(
       `div.category-logo.minimize-icon.${iconClasses}`,
       iconNode(iconKey)
     );
-    let textKey = tabletView ? 'menu_button_label' : 'minimize_button_label';
+    let textKey = tabletView ? "menu_button_label" : "minimize_button_label";
     let text = h(
-      'div.category-name.minimize-text',
+      "div.category-name.minimize-text",
       I18n.t(themePrefix(textKey))
     );
 
@@ -416,21 +461,21 @@ createWidget('layouts-minimize-categories', {
   notifyMinimizedStateChange() {
     let type;
 
-    this.appEvents.trigger('sidebar:toggle', {
+    this.appEvents.trigger("sidebar:toggle", {
       side: this.attrs.side,
       value: !this.attrs.sidebarMinimized,
-      target: 'desktop',
-      type: 'minimize',
+      target: "desktop",
+      type: "minimize",
     });
   },
 });
 
-createWidget('layouts-category-link', {
-  tagName: 'li',
+createWidget("layouts-category-link", {
+  tagName: "li",
   buildKey: (attrs) => `layouts-category-link-${attrs.category.id}`,
 
   defaultState(attrs) {
-    const setCats = settings.show_latest.split('|');
+    const setCats = settings.show_latest.split("|");
     const category = attrs.category;
     const refCats = [category.slug];
 
@@ -450,28 +495,28 @@ createWidget('layouts-category-link', {
     const attributes = {};
 
     if (sidebarMinimized) {
-      attributes['data-tooltip'] = category.name;
+      attributes["data-tooltip"] = category.name;
     }
 
-    attributes['aria-label'] = category.name;
-    attributes['title'] = category.name;
+    attributes["aria-label"] = category.name;
+    attributes["title"] = category.name;
 
     return attributes;
   },
 
   buildClasses(attrs, state) {
-    let classes = 'layouts-category-link';
+    let classes = "layouts-category-link";
     if (attrs.active) {
-      classes += ' active';
+      classes += " active";
     }
     if (!attrs.category.parentCategory) {
-      classes += ' parent-category';
+      classes += " parent-category";
     }
     if (state.extraClasses.length) {
-      classes += ` ${state.extraClasses.join(' ')}`;
+      classes += ` ${state.extraClasses.join(" ")}`;
     }
     if (attrs.showChildren) {
-      classes += ' showing-children';
+      classes += " showing-children";
     }
     return classes;
   },
@@ -489,7 +534,7 @@ createWidget('layouts-category-link', {
     let contents = [];
     let logoContents;
     let logoUrl;
-    let lockIcon = settings.category_lock_icon || 'lock';
+    let lockIcon = settings.category_lock_icon || "lock";
 
     if (customLogoUrl) {
       logoUrl = customLogoUrl;
@@ -498,19 +543,19 @@ createWidget('layouts-category-link', {
     }
 
     if (logoUrl) {
-      logoContents = h('img', {
+      logoContents = h("img", {
         attributes: {
           src: logoUrl,
         },
       });
 
-      if (state.extraClasses.indexOf('has-logo') === -1) {
-        state.extraClasses.push('has-logo');
+      if (state.extraClasses.indexOf("has-logo") === -1) {
+        state.extraClasses.push("has-logo");
         this.scheduleRerender();
       }
     } else if (settings.auto_generate_category_logos) {
       logoContents = h(
-        'span.category-text-logo',
+        "span.category-text-logo",
         {
           attributes: {
             style: `border: 1px solid #${category.color}`,
@@ -521,7 +566,7 @@ createWidget('layouts-category-link', {
     } else if (settings.category_badges) {
       logoContents = h(
         `span.badge-wrapper.${category.siteSettings.category_style}`,
-        h('span.badge-category-bg', {
+        h("span.badge-category-bg", {
           attributes: {
             style: `background-color: #${category.color}`,
           },
@@ -534,7 +579,7 @@ createWidget('layouts-category-link', {
         `div.category-logo.${category.slug}`,
         {
           attributes: {
-            'data-category-id': category.id,
+            "data-category-id": category.id,
           },
         },
         logoContents
@@ -542,15 +587,18 @@ createWidget('layouts-category-link', {
     );
 
     if (category.read_restricted) {
-      contents.push(iconNode(lockIcon, { class: 'category-lock-icon' }));
+      contents.push(iconNode(lockIcon, { class: "category-lock-icon" }));
     }
 
-    contents.push(h('div.category-name', category.name));
+    contents.push(h("div.category-name", category.name));
 
-    const latestTopicCount = topicTracking.lookupCount({ type: 'latest', category });
+    const latestTopicCount = topicTracking.lookupCount({
+      type: "latest",
+      category,
+    });
     if (state.showLatest && latestTopicCount > 0) {
       contents.push(
-        h('div.badge-notification.new-posts', `${latestTopicCount}`)
+        h("div.badge-notification.new-posts", `${latestTopicCount}`)
       );
     }
 
@@ -562,18 +610,18 @@ createWidget('layouts-category-link', {
       }
 
       contents.push(
-        this.attach('button', {
-          icon: showChildren ? 'chevron-up' : 'chevron-down',
-          action: 'toggleChildren',
+        this.attach("button", {
+          icon: showChildren ? "chevron-up" : "chevron-down",
+          action: "toggleChildren",
           actionParam,
-          className: 'toggle-children',
+          className: "toggle-children",
         })
       );
     }
 
     if (attrs.active) {
       contents.push(
-        h('span.active-marker', {
+        h("span.active-marker", {
           attributes: { style: `background-color: #${category.color}` },
         })
       );
@@ -584,13 +632,13 @@ createWidget('layouts-category-link', {
 
   click() {
     if (!this.attrs.hasChildren) {
-      this.appEvents.trigger('sidebar:toggle', {
+      this.appEvents.trigger("sidebar:toggle", {
         side: this.attrs.side,
         value: false,
-        target: 'mobile',
+        target: "mobile",
       });
     }
-    this.sendWidgetAction('toggleChildren', {
+    this.sendWidgetAction("toggleChildren", {
       category: this.attrs.category,
       hideChildren: false,
     });
@@ -598,22 +646,22 @@ createWidget('layouts-category-link', {
   },
 });
 
-createWidget('layouts-custom-link', {
-  tagName: 'li',
+createWidget("layouts-custom-link", {
+  tagName: "li",
 
   buildClasses(attrs) {
     const { link } = attrs;
-    let classes = 'layouts-custom-link layouts-category-link';
+    let classes = "layouts-custom-link layouts-category-link";
 
     let data = Object.assign(
       {},
-      document.getElementById('data-discourse-setup').dataset
+      document.getElementById("data-discourse-setup").dataset
     );
-    let baseUrl = data && data.baseUrl ? data.baseUrl : '';
+    let baseUrl = data && data.baseUrl ? data.baseUrl : "";
     let url = baseUrl + link.url;
     let currentUrl = window.location.href;
     if (url === currentUrl) {
-      classes += ' active';
+      classes += " active";
     }
 
     return classes;
@@ -624,7 +672,7 @@ createWidget('layouts-custom-link', {
     let result = [];
 
     let title = h(
-      'div.category-name',
+      "div.category-name",
       {
         attributes: {
           title: link.title,
@@ -634,8 +682,8 @@ createWidget('layouts-custom-link', {
     );
 
     let icon = h(
-      'div.category-logo',
-      h('img', {
+      "div.category-logo",
+      h("img", {
         attributes: {
           src: link.icon,
           alt: link.title,
@@ -651,8 +699,8 @@ createWidget('layouts-custom-link', {
     const { link } = this.attrs;
     const url = link.url;
 
-    if (link.options.new_tab === 'true') {
-      window.open(url, '_blank');
+    if (link.options.new_tab === "true") {
+      window.open(url, "_blank");
     } else {
       DiscourseURL.routeTo(url);
     }
